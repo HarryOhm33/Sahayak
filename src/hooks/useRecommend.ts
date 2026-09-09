@@ -25,7 +25,7 @@ interface UseRecommendReturn {
   reset: () => void;
 }
 
-const API_URL = "http://localhost:3001/api/recommend";
+const API_URL = "https://is-intelligence-api.onrender.com/api/recommend";
 
 export function useRecommend(): UseRecommendReturn {
   const [status, setStatus] = useState<FetchStatus>("idle");
@@ -50,7 +50,7 @@ export function useRecommend(): UseRecommendReturn {
         const body = await response.json().catch(() => ({}));
         throw new Error(
           (body as { error?: string }).error ??
-            `Server returned HTTP ${response.status}`
+          `Server returned HTTP ${response.status}`
         );
       }
 
