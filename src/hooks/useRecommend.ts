@@ -25,8 +25,7 @@ interface UseRecommendReturn {
   reset: () => void;
 }
 
-const API_URL = "http://localhost:3001/api/recommend";
-// "https://is-intelligence-api.onrender.com/api/recommend"
+const API_URL = "https://is-intelligence-api.onrender.com/api/recommend";
 
 export function useRecommend(): UseRecommendReturn {
   const [status, setStatus] = useState<FetchStatus>("idle");
