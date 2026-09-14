@@ -12,5 +12,16 @@ export default {
   //     },
   //   },
   // },
+      //   theme: {
+      //     extend: {
+      //       fontFamily: {
+      //         sans: ['Inter', 'sans-serif'],
+      //       }
+      //     },
+      //       colors: {
+      //   gray: colors.blue, 
+      //   zinc: colours.blue
+      // },
+      //   },
   plugins: [],
 }

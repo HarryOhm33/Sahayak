@@ -21,18 +21,19 @@ interface UseRecommendReturn {
   status: FetchStatus;
   result: RecommendationResult | null;
   error: string | null;
-  recommend: (query: string) => Promise<void>;
+  recommend: (query: string, file?: File | null) => Promise<void>;
   reset: () => void;
 }
 
-const API_URL = "https://is-intelligence-api.onrender.com/api/recommend";
+const API_URL = "http://localhost:3001/api/recommend";
+// "https://is-intelligence-api.onrender.com/api/recommend"
 
 export function useRecommend(): UseRecommendReturn {
   const [status, setStatus] = useState<FetchStatus>("idle");
   const [result, setResult] = useState<RecommendationResult | null>(null);
   const [error, setError] = useState<string | null>(null);
 
-  const recommend = useCallback(async (query: string) => {
+  const recommend = useCallback(async (query: string, file?: File | null) => {
     if (!query.trim()) return;
 
     setStatus("loading");
@@ -40,11 +41,25 @@ export function useRecommend(): UseRecommendReturn {
     setResult(null);
 
     try {
-      const response = await fetch(API_URL, {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ query: query.trim() }),
-      });
+      let response: Response;
+
+      if (file) {
+        
+        const form = new FormData();
+        form.append("query", query.trim());
+        form.append("file", file, file.name);
+
+        response = await fetch(API_URL, {
+          method: "POST",
+          body: form,
+        });
+      } else {
+        response = await fetch(API_URL, {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ query: query.trim() }),
+        });
+      }
 
       if (!response.ok) {
         const body = await response.json().catch(() => ({}));

@@ -162,36 +162,81 @@ const RECOMMENDATION_SCHEMA = {
   },
 };
 
-export async function expandQuery(userQuery: string): Promise<string[]> {
+export async function expandQuery(
+  userQuery: string,
+  fileBuffer?: Buffer,
+  fileMimeType?: string
+): Promise<string[]> {
   console.log('[gemini:expand] Expanding query:', userQuery);
+  if (fileBuffer) {
+    console.log(`[gemini:expand] File provided — ${fileBuffer.length} bytes, mime: ${fileMimeType}`);
+  }
 
   const ai = getAiClient();
+
+  const systemInstruction = fileBuffer
+    ? `You are an expert BIS (Bureau of Indian Standards) search query specialist for an Indian government procurement and compliance tool.
+
+You will receive a user query AND a document (tender, specification sheet, product datasheet, or procurement notice). Your job is to:
+
+1. CAREFULLY READ the entire document to identify:
+   - The exact product(s) or equipment being procured or certified
+   - Technical specifications (voltage, capacity, material, dimensions, type, grade, etc.)
+   - The product domain or industry sector (electrical, civil, mechanical, food, chemical, etc.)
+   - Any testing, safety, or installation requirements mentioned
+   - Standards or IS numbers already cited in the document (these are strong signals)
+
+2. Generate 6–8 short, precise BIS catalog search terms (1–3 words each) covering DIFFERENT facets of the product.
+
+Critical rules for search term quality:
+- DO NOT copy exact long phrases from the document — the BIS search engine does keyword matching, not phrase search. Long exact phrases will return zero results.
+- INSTEAD, extract the core technical concept and use BIS/IS standard terminology for that concept.
+  Example: document says "11 kV outdoor vacuum circuit breaker for substation use" → good queries: "vacuum circuit breaker", "high voltage switchgear", "outdoor circuit breaker", "11kV switchgear"
+- Each term must target a DIFFERENT dimension: the primary product type, a key sub-component, the material or medium used, a safety/testing aspect, an installation or application aspect.
+- Use precise engineering vocabulary that BIS standard titles actually use (e.g. "distribution transformer" not "power transformer for distribution").
+- If IS standard numbers are mentioned in the document (e.g. IS 13947, IS 3043), include 1–2 terms derived from those standard domains.
+- DO NOT include: the word "standard", "IS", "BIS", "procurement", "tender" in any query term.
+- Output ONLY valid JSON. No explanations, no prose.`
+    : `You are a BIS Standards search query generator for an Indian government procurement tool.
+
+Given a product description, equipment specification, or procurement query, generate 5–6 short, precise search terms (1–3 words each) for the Bureau of Indian Standards (BIS) searchKnowStandards catalog API.
+
+Rules:
+- Each term must target a DIFFERENT aspect: the product type, a key component, a material, a safety/testing aspect, an installation aspect.
+- Use exact BIS/IS technical vocabulary (e.g. "distribution transformer", "insulating oil", "dielectric test").
+- Keep every term to 1–3 words. Do NOT use long phrases — the search engine does keyword matching.
+- Do NOT repeat the same concept across terms.
+- Do NOT include "standard", "IS", or "BIS" in any term.
+- Output ONLY valid JSON matching the schema. No prose.`;
+
+  const userParts: Array<{ text: string } | { inlineData: { mimeType: string; data: string } }> = [
+    {
+      text: fileBuffer
+        ? `USER QUERY: ${userQuery}\n\nThe document attached contains the full tender / specification. Read it carefully and generate optimal BIS search queries based on the actual products and technical requirements described in the document.`
+        : userQuery,
+    },
+  ];
+
+  if (fileBuffer && fileMimeType) {
+    userParts.push({
+      inlineData: {
+        mimeType: fileMimeType,
+        data: fileBuffer.toString('base64'),
+      },
+    });
+  }
 
   const response = await ai.models.generateContent({
     model: config.gemini.expansionModel,
     config: {
       responseMimeType: 'application/json',
       responseSchema: EXPANSION_SCHEMA,
-      systemInstruction: [
-        {
-          text: `You are a BIS Standards search query generator for an Indian government procurement tool.
-
-Given a product description, equipment specification, or procurement query, your task is to generate 5–6 short, precise search terms (1–3 words each) that will be entered into the Bureau of Indian Standards (BIS) searchKnowStandards API.
-
-Rules:
-- Each term must target a DIFFERENT aspect: the product type itself, a key component, a material, a safety/testing aspect, an installation aspect.
-- Keep every term to 1–3 words maximum.
-- Use technical BIS/IS terminology (e.g. "distribution transformer", "insulating oil", "dielectric test").
-- Do NOT repeat the same concept.
-- Do NOT include the word "standard" or "IS" in the terms — the search engine knows it's searching standards.
-- Output ONLY valid JSON matching the schema. No prose.`,
-        },
-      ],
+      systemInstruction: [{ text: systemInstruction }],
     },
     contents: [
       {
         role: 'user',
-        parts: [{ text: userQuery }],
+        parts: userParts,
       },
     ],
   });
@@ -213,12 +258,17 @@ Rules:
 
 export async function generateRecommendation(
   userQuery: string,
-  sourceData: string
+  sourceData: string,
+  fileBuffer?: Buffer,
+  fileMimeType?: string
 ): Promise<RecommendationResponse> {
   console.log('[gemini:recommend] Generating recommendation for:', userQuery);
   console.log(
     `[gemini:recommend] Source data length: ${sourceData.length} chars`
   );
+  if (fileBuffer) {
+    console.log(`[gemini:recommend] File attached — ${fileBuffer.length} bytes, mime: ${fileMimeType}`);
+  }
 
   const ai = getAiClient();
 
@@ -226,6 +276,19 @@ export async function generateRecommendation(
     sourceData.trim().length > 0
       ? `USER QUERY:\n${userQuery}\n\n---\n\nSOURCE DATA RETRIEVED FROM BIS PORTAL (use this as your primary reference for IS numbers, titles, editions, and scope):\n\n${sourceData}`
       : `USER QUERY:\n${userQuery}\n\n(No BIS portal source data was retrieved. Use your training knowledge to generate the best possible IS recommendation. Mark ambiguityFlag as true if uncertain.)`;
+
+  const parts: Array<{ text: string } | { inlineData: { mimeType: string; data: string } }> = [
+    { text: userPrompt },
+  ];
+
+  if (fileBuffer && fileMimeType) {
+    parts.push({
+      inlineData: {
+        mimeType: fileMimeType,
+        data: fileBuffer.toString('base64'),
+      },
+    });
+  }
 
   const response = await ai.models.generateContent({
     model: config.gemini.recommendationModel,
@@ -241,7 +304,7 @@ export async function generateRecommendation(
     contents: [
       {
         role: 'user',
-        parts: [{ text: userPrompt }],
+        parts,
       },
     ],
   });

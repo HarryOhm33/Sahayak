@@ -216,10 +216,10 @@ export const CollapsibleStandard = ({
                               href={`https://bmqsdqljvwgm.compat.objectstorage.ap-mumbai-1.oraclecloud.com/${amendment.downloadUrl}`}
                               target="_blank"
                               rel="noreferrer"
-                              className="inline-flex items-center gap-1.5 text-[11px] font-medium text-zinc-700 hover:text-zinc-900 bg-zinc-100 hover:bg-zinc-200 px-2.5 py-1 rounded transition-colors focus:outline-none flex-shrink-0"
+                              className="inline-flex items-center gap-1.5 text-[12px] font-medium uppercase tracking-wider text-zinc-700 hover:text-zinc-900 bg-zinc-100 hover:bg-zinc-200 px-2.5 py-1 rounded transition-colors focus:outline-none flex-shrink-0"
                             >
-                              <i className="ph ph-download-simple" />
-                              PDF
+                              <i className="ph ph-download text-[15px]" />
+                              Download PDF
                             </a>
                           )}
                         </div>
@@ -253,9 +253,9 @@ export const CollapsibleStandard = ({
                                   href={`https://bmqsdqljvwgm.compat.objectstorage.ap-mumbai-1.oraclecloud.com/${url}`}
                                   target="_blank"
                                   rel="noreferrer"
-                                  className="inline-flex items-center gap-1 text-[11px] font-medium bg-zinc-100 hover:bg-zinc-200 text-zinc-700 py-1 px-2.5 rounded transition-colors focus:outline-none"
-                                >
-                                  <i className="ph ph-download-simple" /> Doc {j + 1}
+                                  className="inline-flex items-center gap-1.5 text-[12px] font-medium uppercase tracking-wider text-zinc-700 hover:text-zinc-900 bg-zinc-100 hover:bg-zinc-200 px-2.5 py-1 rounded transition-colors focus:outline-none flex-shrink-0"
+                                  >
+                                  <i className="ph ph-download text-[15px]" /> Doc {j + 1}
                                 </a>
                               ))}
                             </div>
@@ -288,10 +288,10 @@ export const CollapsibleStandard = ({
                               href={`https://bmqsdqljvwgm.compat.objectstorage.ap-mumbai-1.oraclecloud.com/${manual.downloadUrl}`}
                               target="_blank"
                               rel="noreferrer"
-                              className="inline-flex items-center gap-1.5 text-[11px] font-medium text-zinc-700 hover:text-zinc-900 bg-zinc-100 hover:bg-zinc-200 px-2.5 py-1 rounded transition-colors focus:outline-none flex-shrink-0"
+                             className="inline-flex items-center gap-1.5 text-[12px] font-medium uppercase tracking-wider text-zinc-700 hover:text-zinc-900 bg-zinc-100 hover:bg-zinc-200 px-2.5 py-1 rounded transition-colors focus:outline-none flex-shrink-0"
                             >
-                              <i className="ph ph-download-simple" />
-                              PDF
+                              <i className="ph ph-download text-[15px]" />
+                              Download PDF
                             </a>
                           )}
                         </div>

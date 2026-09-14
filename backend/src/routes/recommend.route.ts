@@ -1,4 +1,5 @@
 import { Router, type Request, type Response } from 'express';
+import multer from 'multer';
 import { expandQuery, generateRecommendation } from '../services/gemini.service';
 import { fetchBisStandardEncIds } from '../services/bis.service';
 import { fetchBisDetailData } from '../services/bis-detail.service';
@@ -6,8 +7,14 @@ import type { RecommendRequest, ApiError } from '../types';
 
 export const recommendRouter = Router();
 
-recommendRouter.post('/', async (req: Request, res: Response) => {
-  const { query } = req.body as Partial<RecommendRequest>;
+const upload = multer({
+  storage: multer.memoryStorage(),
+  limits: { fileSize: 20 * 1024 * 1024 }, // 20 MB max
+});
+
+recommendRouter.post('/', upload.single('file'), async (req: Request, res: Response) => {
+  const query: string | undefined =
+    (req.body as Partial<RecommendRequest>).query;
 
   if (!query || typeof query !== 'string' || query.trim().length === 0) {
     const errBody: ApiError = { error: 'query is required and must be a non-empty string' };
@@ -16,12 +23,21 @@ recommendRouter.post('/', async (req: Request, res: Response) => {
   }
 
   const trimmedQuery = query.trim();
+  const uploadedFile = req.file;
+
   console.log('\n[recommend] ═══ New request ═══');
   console.log('[recommend] Query:', trimmedQuery);
+  if (uploadedFile) {
+    console.log(`[recommend] File: ${uploadedFile.originalname} (${uploadedFile.mimetype}, ${uploadedFile.size} bytes)`);
+  }
 
   try {
     console.log('[recommend] Step 1 — Expanding query with Gemini...');
-    const expandedQueries = await expandQuery(trimmedQuery);
+    const expandedQueries = await expandQuery(
+      trimmedQuery,
+      uploadedFile?.buffer,
+      uploadedFile?.mimetype
+    );
 
     console.log('[recommend] Step 2 — Searching BIS portal...');
     const encIds = await fetchBisStandardEncIds(expandedQueries);
@@ -31,7 +47,12 @@ recommendRouter.post('/', async (req: Request, res: Response) => {
     const sourceData = await fetchBisDetailData(encIds);
 
     console.log('[recommend] Step 4 — Generating IS recommendation...');
-    const recommendation = await generateRecommendation(trimmedQuery, sourceData);
+    const recommendation = await generateRecommendation(
+      trimmedQuery,
+      sourceData,
+      uploadedFile?.buffer,
+      uploadedFile?.mimetype
+    );
 
     console.log('[recommend] ✓ Done\n');
     res.status(200).json(recommendation);

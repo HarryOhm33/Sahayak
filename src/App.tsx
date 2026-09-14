@@ -5,6 +5,7 @@ import "./App.css";
 
 import { nodeTypes } from "./components/graph/nodeTypes";
 import { StandardsSidebar } from "./components/sidebar/StandardsSidebar";
+import { ExportButton } from "./components/export/ExportButton";
 import { useGraphLayout } from "./hooks/useGraphLayout";
 import { useRecommend } from "./hooks/useRecommend";
 import { QUERY_NODE_DEFAULT_HEIGHT } from "./constants/layout";
@@ -14,6 +15,7 @@ type AppState = "idle" | "loading" | "results" | "error";
 export default function App() {
   const [appState, setAppState] = useState<AppState>("idle");
   const [input, setInput] = useState("");
+  const [attachedFile, setAttachedFile] = useState<File | null>(null);
   const [selectedGroupId, setSelectedGroupId] = useState<string | null>(null);
   const [queryNodeHeight, setQueryNodeHeight] = useState(QUERY_NODE_DEFAULT_HEIGHT);
   const [sidebarOpen, setSidebarOpen] = useState(false);
@@ -23,7 +25,7 @@ export default function App() {
   const queryNodeY = appState === "idle" ? window.innerHeight / 2 - 160 : 40;
 
   const handleSearch = useCallback(
-    async (query?: string) => {
+    async (query?: string, file?: File | null) => {
       const q = (query ?? input).trim();
       if (!q) return;
       if (query) setInput(query);
@@ -32,9 +34,9 @@ export default function App() {
       setSidebarOpen(false);
       setSelectedGroupId(null);
 
-      await recommend(q);
+      await recommend(q, file ?? attachedFile);
     },
-    [input, recommend]
+    [input, recommend, attachedFile]
   );
 
   if (status === "success" && appState === "loading") {
@@ -55,6 +57,7 @@ export default function App() {
     reset();
     setAppState("idle");
     setInput("");
+    setAttachedFile(null);
     setSelectedGroupId(null);
     setSidebarOpen(false);
   }, [reset]);
@@ -75,7 +78,9 @@ export default function App() {
     queryNodeHeight,
     sidebarOpen,
     groupedStandards,
+    attachedFile,
     onSearch: handleSearch,
+    onFileChange: setAttachedFile,
     onHeightChange: setQueryNodeHeight,
     onNodeSelect,
   });
@@ -88,10 +93,10 @@ export default function App() {
 
           {appState !== "idle" && (
             <div className="absolute top-5 left-5 z-10 animate-fade-in flex items-center gap-2">
-              <div className="bg-white border border-zinc-200 px-3 py-1.5 rounded-md flex items-center gap-2 shadow-sm">
-                <i className="ph-fill ph-target text-base text-zinc-900" />
-                <span className="text-[11px] font-medium text-zinc-900 uppercase tracking-widest">
-                  IS Intelligence
+              <div className="bg-white border border-zinc-200 px-3 rounded-md flex items-center gap-2">
+                <i className="ph-fill ph-solar-panel text-2xl text-zinc-900" />
+                <span className="text-[17px] font-bold mt-0.5 tracking-wide leading-relaxed text-zinc-700 cursor-default select-none">
+                  Sahayak
                 </span>
               </div>
             </div>
@@ -133,6 +138,13 @@ export default function App() {
               color="#d4d4d8"
             />
           </ReactFlow>
+
+          {/* Export button — bottom-left floating panel, results only */}
+          {appState === "results" && result && (
+            <div className="absolute bottom-6 left-5 z-10 animate-fade-in">
+              <ExportButton query={input} result={result} />
+            </div>
+          )}
         </div>
 
         <StandardsSidebar

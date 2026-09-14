@@ -19,7 +19,7 @@ app.use((_req, res) => {
 });
 
 app.listen(config.port, () => {
-  console.log(`\nIS Intelligence Backend`);
+  console.log(`\nSahayak Engine Backend`);
   console.log(`   Port     : ${config.port}`);
   console.log(`   Expansion: ${config.gemini.expansionModel}`);
   console.log(`   Analysis : ${config.gemini.recommendationModel}`);

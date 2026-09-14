@@ -3,11 +3,13 @@ import type { Node, Edge } from "reactflow";
 import type { Standard } from "../types/standards";
 import {
   QUERY_TO_PRIMARY_GAP,
-  CHILD_NODE_WIDTH,
-  CHILD_NODE_GAP,
-  CHILD_NODE_Y_OFFSET,
   SIDEBAR_WIDTH,
+  CARD_HEIGHT_EST,
+  NODE_HEADER_H,
+  CHILD_NODE_GAP,
+  PRIMARY_TO_CHILD_GAP,
 } from "../constants/layout";
+
 
 interface UseGraphLayoutOptions {
   appState: "idle" | "loading" | "results" | "error";
@@ -16,7 +18,9 @@ interface UseGraphLayoutOptions {
   queryNodeHeight: number;
   sidebarOpen: boolean;
   groupedStandards: Record<string, Standard[]>;
-  onSearch: (query: string) => void;
+  attachedFile: File | null;
+  onSearch: (query: string, file?: File | null) => void;
+  onFileChange: (file: File | null) => void;
   onHeightChange: (h: number) => void;
   onNodeSelect: (id: string) => void;
 }
@@ -26,6 +30,41 @@ interface GraphLayout {
   edges: Edge[];
 }
 
+
+function isTwoCol(isPrimary: boolean, count: number): boolean {
+  return isPrimary ? count >= 2 : count > 3;
+}
+
+
+function nodeWidth(isPrimary: boolean, count: number): number {
+  return isTwoCol(isPrimary, count) ? 600 : 300;
+}
+
+function nodeHeight(isPrimary: boolean, count: number): number {
+  if (count === 0) return NODE_HEADER_H + CARD_HEIGHT_EST;
+  const cols = isTwoCol(isPrimary, count) ? 2 : 1;
+  const rows = Math.ceil(count / cols);
+  return NODE_HEADER_H + rows * CARD_HEIGHT_EST;
+}
+
+// Canonical order for secondary relationship groups
+const RELATION_ORDER = [
+  "normative",
+  "testing",
+  "safety",
+  "installation",
+  "related",
+] as const;
+
+const RELATION_LABELS: Record<string, string> = {
+  normative: "Normative References",
+  testing: "Testing Standards",
+  safety: "Safety Standards",
+  installation: "Installation Codes",
+  related: "Related Standards",
+};
+
+
 export const useGraphLayout = ({
   appState,
   input,
@@ -33,7 +72,9 @@ export const useGraphLayout = ({
   queryNodeHeight,
   sidebarOpen,
   groupedStandards,
+  attachedFile,
   onSearch,
+  onFileChange,
   onHeightChange,
   onNodeSelect,
 }: UseGraphLayoutOptions): GraphLayout => {
@@ -41,9 +82,8 @@ export const useGraphLayout = ({
   const stableOnHeightChange = useCallback(onHeightChange, []);
 
   return useMemo<GraphLayout>(() => {
-    const sidebarWidth = sidebarOpen ? SIDEBAR_WIDTH : 0;
-    const centerX = (window.innerWidth - sidebarWidth) / 2;
-    const primaryNodeY = queryNodeY + queryNodeHeight + QUERY_TO_PRIMARY_GAP;
+    const sidebarOffset = sidebarOpen ? SIDEBAR_WIDTH : 0;
+    const centerX = (window.innerWidth - sidebarOffset) / 2;
 
     const nodes: Node[] = [
       {
@@ -52,7 +92,9 @@ export const useGraphLayout = ({
         position: { x: centerX - 220, y: queryNodeY },
         data: {
           query: input,
+          attachedFile,
           onSearch: stableOnSearch,
+          onFileChange,
           onHeightChange: stableOnHeightChange,
           isIdle: appState === "idle",
           isLoading: appState === "loading",
@@ -62,65 +104,85 @@ export const useGraphLayout = ({
 
     const edges: Edge[] = [];
 
-    if (appState === "results" && Object.keys(groupedStandards).length > 0) {
-      nodes.push({
+    if (appState !== "results" || Object.keys(groupedStandards).length === 0) {
+      return { nodes, edges };
+    }
+
+
+    const primaryStds = groupedStandards["primary"] ?? [];
+    const primaryCount = primaryStds.length;
+    const primW = nodeWidth(true, primaryCount);
+    const primH = nodeHeight(true, primaryCount);
+    const primaryX = centerX - primW / 2;
+    const primaryY = queryNodeY + queryNodeHeight + QUERY_TO_PRIMARY_GAP;
+
+    nodes.push({
+      id: "group-primary",
+      type: "groupNode",
+      position: { x: primaryX, y: primaryY },
+      data: {
+        type: "primary",
+        title: "Primary Standards",
+        standards: primaryStds,
         id: "group-primary",
+        onSelect: onNodeSelect,
+      },
+    });
+
+    edges.push({
+      id: "edge-query-primary",
+      source: "node-query",
+      target: "group-primary",
+      type: "default",
+      style: { stroke: "#c2c2c2", strokeWidth: 1 },
+    });
+
+
+    const childRels = RELATION_ORDER.filter(
+      (r) => (groupedStandards[r]?.length ?? 0) > 0
+    );
+
+    if (childRels.length === 0) return { nodes, edges };
+
+    const childY = primaryY + primH + PRIMARY_TO_CHILD_GAP;
+
+    const childWidths = childRels.map((r) =>
+      nodeWidth(false, groupedStandards[r].length)
+    );
+    const totalChildWidth =
+      childWidths.reduce((sum, w) => sum + w, 0) +
+      (childRels.length - 1) * CHILD_NODE_GAP;
+
+    let cursorX = centerX - totalChildWidth / 2;
+
+    childRels.forEach((rel, idx) => {
+      const groupId = `group-${rel}`;
+      const stds = groupedStandards[rel];
+      const w = childWidths[idx];
+
+      nodes.push({
+        id: groupId,
         type: "groupNode",
-        position: { x: centerX - 160, y: primaryNodeY },
+        position: { x: cursorX, y: childY },
         data: {
-          type: "primary",
-          title: "Primary Target",
-          standards: groupedStandards["primary"] ?? [],
-          id: "group-primary",
+          type: rel,
+          title: RELATION_LABELS[rel] ?? rel,
+          standards: stds,
+          id: groupId,
           onSelect: onNodeSelect,
         },
       });
 
       edges.push({
-        id: "edge-query-primary",
-        source: "node-query",
-        target: "group-primary",
-        type: "bezier",
-        style: { stroke: "#c2c2c2ff", strokeWidth: 1 },
+        id: `edge-primary-${groupId}`,
+        source: "group-primary",
+        target: groupId,
+        type: "default",
+        style: { stroke: "#c2c2c2", strokeWidth: 1 },
       });
 
-      const relationTypes = Object.keys(groupedStandards).filter(
-        (k) => k !== "primary"
-      );
-
-      const totalRowWidth =
-        relationTypes.length * CHILD_NODE_WIDTH +
-        (relationTypes.length - 1) * CHILD_NODE_GAP;
-      const startX = centerX - totalRowWidth / 2;
-
-      relationTypes.forEach((rel, index) => {
-        const groupId = `group-${rel}`;
-
-        nodes.push({
-          id: groupId,
-          type: "groupNode",
-          position: {
-            x: startX + index * (CHILD_NODE_WIDTH + CHILD_NODE_GAP),
-            y: primaryNodeY + CHILD_NODE_Y_OFFSET,
-          },
-          data: {
-            type: rel,
-            title: `${rel.charAt(0).toUpperCase() + rel.slice(1)} References`,
-            standards: groupedStandards[rel],
-            id: groupId,
-            onSelect: onNodeSelect,
-          },
-        });
-
-        edges.push({
-          id: `edge-primary-${groupId}`,
-          source: "group-primary",
-          target: groupId,
-          type: "bezier",
-          style: { stroke: "#c2c2c2ff", strokeWidth: 1 },
-        });
-      });
-    }
+      cursorX += w + CHILD_NODE_GAP;
+    });
 
     return { nodes, edges };
   }, [
@@ -130,6 +192,8 @@ export const useGraphLayout = ({
     queryNodeHeight,
     sidebarOpen,
     groupedStandards,
+    attachedFile,
+    onFileChange,
     onNodeSelect,
     stableOnSearch,
     stableOnHeightChange,
