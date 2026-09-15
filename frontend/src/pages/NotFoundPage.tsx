@@ -2,7 +2,7 @@ import { Link } from "react-router-dom";
 
 export const NotFoundPage = () => {
   return (
-    <div className="flex-1 bg-slate-50 text-slate-900 flex flex-col justify-center items-center px-4 py-12 font-sans select-none">
+    <div className="flex-1 bg-slate-50 text-slate-900 flex flex-col justify-center items-center px-4 py-12 font-sans select-none overflow-y-auto">
       <main className="max-w-md w-full bg-white border border-slate-200/90 rounded-2xl p-8 shadow-sm text-center flex flex-col items-center animate-fade-in">
         {/* Emblem & Logo Header */}
         <div className="w-14 h-14 rounded-2xl bg-slate-900 flex items-center justify-center p-2.5 shadow-md mb-4">

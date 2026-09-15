@@ -62,7 +62,7 @@ export const HomePage = () => {
   };
 
   return (
-    <div className="flex-1 bg-slate-50 text-slate-900 flex flex-col font-sans">
+    <div className="flex-1 bg-slate-50 text-slate-900 flex flex-col font-sans overflow-y-auto">
       <main className="flex-1 max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 pt-10 sm:pt-16 md:pt-20 pb-16 sm:pb-20 w-full flex flex-col items-center text-center">
         
         {/* Badge */}
