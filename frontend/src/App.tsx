@@ -1,9 +1,10 @@
-import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
+import { BrowserRouter, Routes, Route } from "react-router-dom";
 import { Navbar } from "./components/Navbar";
 import { HomePage } from "./pages/HomePage";
 import { RecommendPage } from "./pages/RecommendPage";
 import { HistoryPage } from "./pages/HistoryPage";
 import { DocumentsPage } from "./pages/DocumentsPage";
+import { NotFoundPage } from "./pages/NotFoundPage";
 
 export default function App() {
   return (
@@ -16,7 +17,7 @@ export default function App() {
             <Route path="/recommend" element={<RecommendPage />} />
             <Route path="/recommend/history" element={<HistoryPage />} />
             <Route path="/recommend/documents" element={<DocumentsPage />} />
-            <Route path="*" element={<Navigate to="/" replace />} />
+            <Route path="*" element={<NotFoundPage />} />
           </Routes>
         </main>
       </div>

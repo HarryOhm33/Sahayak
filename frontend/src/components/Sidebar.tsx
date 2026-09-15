@@ -6,15 +6,8 @@ export const Sidebar = () => {
   const currentPath = location.pathname;
   const sidebarRef = useRef<HTMLDivElement>(null);
 
-  // Initialize collapsed state from localStorage or default to false on desktop
-  const [isCollapsed, setIsCollapsed] = useState(() => {
-    if (typeof window !== "undefined") {
-      const saved = localStorage.getItem("sahayak_left_sidebar_collapsed");
-      if (saved !== null) return JSON.parse(saved);
-      return window.innerWidth < 768; // auto-collapse on small screens
-    }
-    return false;
-  });
+  // Default to collapsed (true) so sidebar is closed by default on page load/refresh
+  const [isCollapsed, setIsCollapsed] = useState(true);
 
   const toggleCollapse = () => {
     setIsCollapsed((prev: boolean) => {
