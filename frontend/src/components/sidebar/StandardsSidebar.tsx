@@ -26,9 +26,9 @@ export const StandardsSidebar = ({
         />
       )}
 
-      {/* Floating Overlay Container below Navbar */}
+      {/* Docked Overlay Container with decreased height */}
       <div
-        className={`absolute right-0 top-0 bottom-0 h-full z-40 select-none ${
+        className={`absolute right-0 top-4 bottom-4 z-40 select-none ${
           isOpen ? "pointer-events-auto" : "pointer-events-none"
         }`}
       >
@@ -48,10 +48,10 @@ export const StandardsSidebar = ({
 
         {/* Sidebar Container Panel */}
         <div
-          className={`h-full bg-white border-l border-zinc-200 flex flex-col overflow-hidden transition-all duration-300 ease-in-out shadow-2xl ${
+          className={`h-full bg-white border-y border-l border-slate-200 rounded-l-2xl flex flex-col overflow-hidden transition-all duration-300 ease-in-out shadow-2xl ${
             isOpen
               ? "w-[85vw] max-w-[420px] sm:w-[380px] md:w-[420px] opacity-100"
-              : "w-0 opacity-0"
+              : "w-0 opacity-0 border-0"
           }`}
         >
           <div className="w-[85vw] max-w-[420px] sm:w-[380px] md:w-[420px] h-full flex flex-col overflow-hidden relative flex-shrink-0">

@@ -4,7 +4,7 @@ export const Navbar = () => {
   const location = useLocation();
   const navigate = useNavigate();
 
-  const isRecommendPage = location.pathname === "/recommend";
+  const isRecommendPage = location.pathname.startsWith("/recommend");
 
   const handleExploreClick = (e: React.MouseEvent) => {
     e.preventDefault();
@@ -14,7 +14,7 @@ export const Navbar = () => {
   };
 
   return (
-    <header className="w-full border-b border-slate-200 bg-white sticky top-0 z-50 flex-shrink-0 shadow-xs max-w-full overflow-x-hidden">
+    <header className="w-full border-b border-slate-200 bg-white relative z-50 flex-shrink-0 shadow-xs max-w-full overflow-x-hidden">
       <div className="max-w-7xl mx-auto px-3 sm:px-6 h-16 flex items-center justify-between gap-3 sm:gap-4">
         
         {/* Left Section */}
