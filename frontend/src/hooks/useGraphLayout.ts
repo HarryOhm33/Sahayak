@@ -10,7 +10,6 @@ import {
   PRIMARY_TO_CHILD_GAP,
 } from "../constants/layout";
 
-
 interface UseGraphLayoutOptions {
   appState: "idle" | "loading" | "results" | "error";
   input: string;
@@ -30,11 +29,9 @@ interface GraphLayout {
   edges: Edge[];
 }
 
-
 function isTwoCol(isPrimary: boolean, count: number): boolean {
   return isPrimary ? count >= 2 : count > 3;
 }
-
 
 function nodeWidth(isPrimary: boolean, count: number): number {
   return isTwoCol(isPrimary, count) ? 600 : 300;
@@ -64,7 +61,6 @@ const RELATION_LABELS: Record<string, string> = {
   related: "Related Standards",
 };
 
-
 export const useGraphLayout = ({
   appState,
   input,
@@ -82,13 +78,18 @@ export const useGraphLayout = ({
   const stableOnHeightChange = useCallback(onHeightChange, []);
 
   return useMemo<GraphLayout>(() => {
-    const sidebarOffset = sidebarOpen ? SIDEBAR_WIDTH : 0;
-    const centerX = (window.innerWidth - sidebarOffset) / 2;
+    const isMobile = typeof window !== "undefined" && window.innerWidth < 640;
+    const sidebarOffset = (sidebarOpen && !isMobile) ? SIDEBAR_WIDTH : 0;
+    const screenWidth = typeof window !== "undefined" ? window.innerWidth : 1200;
+    const centerX = Math.max(240, (screenWidth - sidebarOffset) / 2);
+
+    const isMovable = appState === "results";
 
     const nodes: Node[] = [
       {
         id: "node-query",
         type: "queryNode",
+        draggable: isMovable,
         position: { x: centerX - 220, y: queryNodeY },
         data: {
           query: input,
@@ -98,6 +99,7 @@ export const useGraphLayout = ({
           onHeightChange: stableOnHeightChange,
           isIdle: appState === "idle",
           isLoading: appState === "loading",
+          isMovable,
         },
       },
     ];
@@ -107,7 +109,6 @@ export const useGraphLayout = ({
     if (appState !== "results" || Object.keys(groupedStandards).length === 0) {
       return { nodes, edges };
     }
-
 
     const primaryStds = groupedStandards["primary"] ?? [];
     const primaryCount = primaryStds.length;
@@ -136,7 +137,6 @@ export const useGraphLayout = ({
       type: "default",
       style: { stroke: "#c2c2c2", strokeWidth: 1 },
     });
-
 
     const childRels = RELATION_ORDER.filter(
       (r) => (groupedStandards[r]?.length ?? 0) > 0

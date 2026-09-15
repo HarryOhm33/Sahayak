@@ -38,4 +38,5 @@ export type Standard = {
   missingParams?: string[];
   gazetteDocuments?: GazetteEntry[];
   productManuals?: ProductManualEntry[];
+  url?: string;
 };

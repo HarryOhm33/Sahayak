@@ -16,45 +16,61 @@ interface CardProps {
   rightBorder?: boolean;
 }
 
-const StandardCard = ({ std, bottomBorder, rightBorder = false }: CardProps) => (
-  <div
-    className={[
-      "p-4 flex-1 min-w-0",
-      bottomBorder ? "border-b border-zinc-100" : "",
-      rightBorder ? "border-r border-zinc-200" : "",
-    ]
-      .filter(Boolean)
-      .join(" ")}
-  >
-    <div className="flex justify-between items-start mb-1 gap-2">
-      <div className="text-[16px] font-medium text-zinc-900 tracking-tight">
-        {std.number}
-      </div>
-      <div className="text-[11px] font-medium text-zinc-400">
-        {std.edition}
-      </div>
-    </div>
+const StandardCard = ({ std, bottomBorder, rightBorder = false }: CardProps) => {
+  const bisUrl =
+    std.url ||
+    `https://www.services.bis.gov.in/php/BIS_2.0/bis_review/standard_review/StandardDetails?val=${encodeURIComponent(
+      std.number
+    )}`;
 
-    <div className="text-[13px] font-medium text-zinc-600 leading-relaxed tracking-wide line-clamp-2 mb-3">
-      {std.title}
-    </div>
+  return (
+    <div
+      className={[
+        "p-3.5 sm:p-4 flex-1 min-w-0 bg-white flex flex-col justify-between",
+        bottomBorder ? "border-b border-slate-200" : "",
+        rightBorder ? "border-r border-slate-200" : "",
+      ]
+        .filter(Boolean)
+        .join(" ")}
+    >
+      <div>
+        <div className="flex flex-wrap items-center justify-between gap-1.5 mb-1.5">
+          <div className="flex items-center gap-1.5 flex-wrap">
+            <span className="text-sm font-extrabold text-slate-900 tracking-tight">
+              {std.number}
+            </span>
+            <span className="inline-flex items-center gap-1 text-[9px] font-bold uppercase tracking-wider px-1.5 py-0.5 bg-emerald-50 text-emerald-800 border border-emerald-200/90 rounded-md shadow-2xs">
+              <i className="ph-fill ph-seal-check text-emerald-600 text-xs" />
+              Verified from BIS
+            </span>
+          </div>
+          <div className="text-[11px] font-semibold text-slate-400 flex-shrink-0">
+            {std.edition}
+          </div>
+        </div>
 
-    <div className="flex flex-wrap gap-1.5">
-      <span className="text-[10px] font-medium uppercase tracking-wider px-2 py-0.5 bg-zinc-100 text-zinc-500 rounded">
-        {std.status}
-      </span>
-      {std.relevance != null && (
-        <span
-          className={`text-[10px] font-medium uppercase tracking-wider px-2 py-0.5 rounded ${getRelevanceColor(
-            std.relevance
-          )}`}
-        >
-          {std.relevance}% Relevance
+        <div className="text-xs font-medium text-slate-600 leading-relaxed line-clamp-2 mb-3">
+          {std.title}
+        </div>
+      </div>
+
+      <div className="flex flex-wrap items-center gap-1.5 pt-1 border-t border-slate-100 mt-1">
+        <span className="text-[10px] font-bold uppercase tracking-wider px-2 py-0.5 bg-slate-100 text-slate-700 border border-slate-200 rounded">
+          Current Version
         </span>
-      )}
+        {std.relevance != null && (
+          <span
+            className={`text-[10px] font-semibold uppercase tracking-wider px-2 py-0.5 rounded ${getRelevanceColor(
+              std.relevance
+            )}`}
+          >
+            {std.relevance}% Relevance
+          </span>
+        )}
+      </div>
     </div>
-  </div>
-);
+  );
+};
 
 const TwoColGrid = ({ standards }: { standards: Standard[] }) => {
   const rows: Standard[][] = [];
@@ -67,7 +83,7 @@ const TwoColGrid = ({ standards }: { standards: Standard[] }) => {
       {rows.map((row, rowIdx) => {
         const isLastRow = rowIdx === rows.length - 1;
         return (
-          <div key={rowIdx} className={`flex${isLastRow ? "" : " border-b border-zinc-200"}`}>
+          <div key={rowIdx} className={`flex${isLastRow ? "" : " border-b border-slate-200"}`}>
             {row.map((std, colIdx) => (
               <StandardCard
                 key={std.id}
@@ -76,15 +92,12 @@ const TwoColGrid = ({ standards }: { standards: Standard[] }) => {
                 rightBorder={colIdx === 0 && row.length === 2}
               />
             ))}
-            {/* 
-            {row.length === 1 && <div className="" />} */}
           </div>
         );
       })}
     </>
   );
 };
-
 
 const SingleColList = ({ standards }: { standards: Standard[] }) => (
   <>
@@ -98,6 +111,22 @@ const SingleColList = ({ standards }: { standards: Standard[] }) => (
   </>
 );
 
+function getHeaderStyle(type: string, title: string) {
+  if (type === "primary") {
+    return { bg: "bg-blue-700 border-blue-700 text-white", badge: "bg-blue-900/60 text-white", icon: "ph-star-fill text-amber-300" };
+  }
+  const lower = title.toLowerCase();
+  if (lower.includes("testing")) {
+    return { bg: "bg-emerald-700 border-emerald-700 text-white", badge: "bg-emerald-900/60 text-white", icon: "ph-flask-fill text-emerald-200" };
+  }
+  if (lower.includes("safety")) {
+    return { bg: "bg-amber-600 border-amber-600 text-white", badge: "bg-amber-900/60 text-white", icon: "ph-shield-check-fill text-amber-100" };
+  }
+  if (lower.includes("installation")) {
+    return { bg: "bg-purple-700 border-purple-700 text-white", badge: "bg-purple-900/60 text-white", icon: "ph-wrench-fill text-purple-200" };
+  }
+  return { bg: "bg-slate-700 border-slate-700 text-white", badge: "bg-slate-900/60 text-white", icon: "ph-file-text-fill text-slate-300" };
+}
 
 export const GroupNode = ({ data }: { data: GroupNodeData }) => {
   const isPrimary = data.type === "primary";
@@ -112,12 +141,16 @@ export const GroupNode = ({ data }: { data: GroupNodeData }) => {
       : "Primary Standards"
     : data.title;
 
+  const headerStyle = getHeaderStyle(data.type, data.title);
+
   return (
     <div
-      className="relative bg-white rounded-md border border-zinc-200 cursor-pointer
-        animate-fade-in hover:border-zinc-400 hover:shadow-sm transition-all"
+      className="relative bg-white rounded-xl border border-slate-200 shadow-md cursor-pointer overflow-hidden transition-all hover:shadow-lg"
       style={{ width: nodeWidth }}
-      onClick={() => data.onSelect(data.id)}
+      onClick={(e) => {
+        e.stopPropagation();
+        data.onSelect(data.id);
+      }}
     >
       <Handle
         type="target"
@@ -126,36 +159,20 @@ export const GroupNode = ({ data }: { data: GroupNodeData }) => {
       />
 
       <div
-        className={`px-4 h-10 border-b rounded-t-md flex justify-between items-center ${
-          isPrimary
-            ? "bg-zinc-900 border-zinc-900"
-            : "bg-zinc-50 border-zinc-200"
-        }`}
+        className={`px-4 h-11 border-b flex justify-between items-center ${headerStyle.bg}`}
       >
-        <div
-          className={`text-[13px] font-medium uppercase tracking-wider flex items-center gap-2 ${
-            isPrimary ? "text-white" : "text-zinc-500"
-          }`}
-        >
-          <i
-            className={`ph-fill text-xl ${
-              isPrimary ? "ph-certificate" : "ph-file-text"
-            }`}
-          />
-          {headerLabel}
+        <div className="text-xs font-bold uppercase tracking-wider flex items-center gap-2">
+          <i className={`ph ${headerStyle.icon} text-base`} />
+          <span>{headerLabel}</span>
         </div>
-        <div
-          className={`text-[11px] font-semibold px-2 py-0.5 rounded ${
-            isPrimary ? "text-zinc-900 bg-white" : "text-zinc-500 bg-zinc-200"
-          }`}
-        >
+        <div className={`text-[11px] font-bold px-2 py-0.5 rounded-full ${headerStyle.badge}`}>
           {count}
         </div>
       </div>
 
-      <div className="overflow-hidden rounded-b-md">
+      <div className="overflow-hidden bg-white">
         {count === 0 ? (
-          <div className="p-4 text-[12px] text-zinc-400">No standards</div>
+          <div className="p-4 text-xs font-medium text-slate-400">No standards</div>
         ) : useTwoCol ? (
           <TwoColGrid standards={data.standards} />
         ) : (
