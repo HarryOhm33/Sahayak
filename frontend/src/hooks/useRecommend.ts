@@ -25,7 +25,7 @@ interface UseRecommendReturn {
   reset: () => void;
 }
 
-const API_URL = "https://is-intelligence-api.onrender.com/api/recommend";
+const API_URL = `${import.meta.env.VITE_API_BASE_URL}/api/recommend`;
 
 export function useRecommend(): UseRecommendReturn {
   const [status, setStatus] = useState<FetchStatus>("idle");
@@ -43,7 +43,6 @@ export function useRecommend(): UseRecommendReturn {
       let response: Response;
 
       if (file) {
-        
         const form = new FormData();
         form.append("query", query.trim());
         form.append("file", file, file.name);
@@ -64,7 +63,7 @@ export function useRecommend(): UseRecommendReturn {
         const body = await response.json().catch(() => ({}));
         throw new Error(
           (body as { error?: string }).error ??
-          `Server returned HTTP ${response.status}`
+            `Server returned HTTP ${response.status}`,
         );
       }
 
@@ -85,8 +84,7 @@ export function useRecommend(): UseRecommendReturn {
       });
       setStatus("success");
     } catch (err) {
-      const msg =
-        err instanceof Error ? err.message : "Unknown error occurred";
+      const msg = err instanceof Error ? err.message : "Unknown error occurred";
       console.error("[useRecommend] fetch failed:", msg);
       setError(msg);
       setStatus("error");

@@ -1,5 +1,5 @@
 {
-  "name": "im-dr-doom",
+  "name": "sahayak-frontend",
   "private": true,
   "version": "0.0.0",
   "type": "module",
@@ -7,9 +7,7 @@
     "dev": "vite",
     "build": "vite build",
     "lint": "eslint .",
-    "preview": "vite preview",
-    "backend": "cd backend && npm run dev",
-    "both": "concurrently --names \"BACKEND,FRONTEND\" --prefix-colors \"cyan,magenta\" \"npm run backend\" \"npm run dev\""
+    "preview": "vite preview"
   },
   "dependencies": {
     "@tailwindcss/postcss": "^4.3.3",
