@@ -2,6 +2,8 @@ import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
 import { Navbar } from "./components/Navbar";
 import { HomePage } from "./pages/HomePage";
 import { RecommendPage } from "./pages/RecommendPage";
+import { HistoryPage } from "./pages/HistoryPage";
+import { DocumentsPage } from "./pages/DocumentsPage";
 
 export default function App() {
   return (
@@ -12,6 +14,8 @@ export default function App() {
           <Routes>
             <Route path="/" element={<HomePage />} />
             <Route path="/recommend" element={<RecommendPage />} />
+            <Route path="/recommend/history" element={<HistoryPage />} />
+            <Route path="/recommend/documents" element={<DocumentsPage />} />
             <Route path="*" element={<Navigate to="/" replace />} />
           </Routes>
         </main>

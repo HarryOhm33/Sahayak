@@ -81,20 +81,20 @@ export const HomePage = () => {
         </p>
 
         {/* Call to action buttons */}
-        <div className="w-full sm:w-auto flex flex-col sm:flex-row items-stretch sm:items-center justify-center gap-3 sm:gap-3.5 mb-12 sm:mb-16">
+        <div className="w-full max-w-2xl mx-auto flex flex-wrap sm:flex-nowrap items-center justify-center gap-3 sm:gap-4 mb-12 sm:mb-16">
           <Link
             to="/recommend"
-            className="inline-flex items-center justify-center gap-2 px-7 py-3.5 rounded-xl bg-blue-600 hover:bg-blue-700 text-white text-sm font-bold transition-all shadow-md shadow-blue-600/20 cursor-pointer active:scale-95"
+            className="inline-flex items-center justify-center gap-2 px-5 sm:px-7 py-3.5 rounded-xl bg-blue-600 hover:bg-blue-700 text-white text-xs sm:text-sm font-bold transition-all shadow-md shadow-blue-600/20 cursor-pointer active:scale-95 whitespace-nowrap"
           >
             <span>Launch Recommendation Canvas</span>
-            <i className="ph ph-arrow-right text-base" />
+            <i className="ph ph-arrow-right text-sm sm:text-base flex-shrink-0" />
           </Link>
           <a
             href="#capabilities"
-            className="inline-flex items-center justify-center gap-2 px-5 py-3.5 rounded-xl border border-slate-200 hover:border-blue-300 hover:bg-white text-slate-700 text-sm font-semibold transition-colors cursor-pointer"
+            className="inline-flex items-center justify-center gap-2 px-5 sm:px-6 py-3.5 rounded-xl border border-slate-200 hover:border-blue-300 hover:bg-white text-slate-700 text-xs sm:text-sm font-semibold transition-colors cursor-pointer whitespace-nowrap bg-white/60"
           >
             <span>Explore Capabilities</span>
-            <i className="ph ph-arrow-down text-sm text-slate-400" />
+            <i className="ph ph-arrow-down text-xs sm:text-sm text-slate-400 flex-shrink-0" />
           </a>
         </div>
 

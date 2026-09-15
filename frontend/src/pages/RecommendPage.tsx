@@ -1,11 +1,12 @@
 import { useState, useCallback, useEffect, useRef, type ChangeEvent, type DragEvent } from "react";
 import { useSearchParams, useLocation, Link } from "react-router-dom";
-import ReactFlow, { Background, BackgroundVariant, Controls } from "reactflow";
+import ReactFlow, { Background, BackgroundVariant, Controls, PanOnScrollMode } from "reactflow";
 import "reactflow/dist/style.css";
 import "../App.css";
 
 import { nodeTypes } from "../components/graph/nodeTypes";
 import { StandardsSidebar } from "../components/sidebar/StandardsSidebar";
+import { Sidebar as LeftRecommendSidebar } from "../components/Sidebar";
 import { ExportButton } from "../components/export/ExportButton";
 import { useGraphLayout } from "../hooks/useGraphLayout";
 import { useRecommend } from "../hooks/useRecommend";
@@ -176,9 +177,11 @@ export const RecommendPage = () => {
   // =========================================================================
   if (appState !== "results") {
     return (
-      <div className="w-full max-w-full overflow-x-hidden flex-1 bg-slate-50 text-slate-900 font-sans flex flex-col relative selection:bg-blue-100">
-        <main className="flex-1 flex flex-col items-center justify-center px-3 sm:px-6 py-6 sm:py-8 max-w-2xl mx-auto w-full text-center">
-          {/* Logo & Header */}
+      <div className="w-full h-full max-w-full overflow-hidden flex-1 bg-slate-50 text-slate-900 font-sans flex flex-row relative selection:bg-blue-100">
+        <LeftRecommendSidebar />
+        <div className="flex-1 overflow-y-auto flex flex-col items-center justify-center min-w-0">
+          <main className="flex-1 flex flex-col items-center justify-center px-3 sm:px-6 py-6 sm:py-8 max-w-2xl mx-auto w-full text-center">
+            {/* Logo & Header */}
           <div className="mb-6 flex flex-col items-center animate-fade-in">
             <div className="w-12 h-12 rounded-xl bg-zinc-900 flex items-center justify-center shadow-md mb-3 p-2">
               <img src="/favicon.svg" alt="Sahayak Logo" className="w-full h-full object-contain" />
@@ -365,6 +368,7 @@ export const RecommendPage = () => {
             </div>
           </div>
         </main>
+        </div>
       </div>
     );
   }
@@ -373,8 +377,9 @@ export const RecommendPage = () => {
   // VIEW 2: REACTFLOW GRAPH (Rendered ONLY when data from backend arrives!)
   // =========================================================================
   return (
-    <div className="w-full h-full flex-1 bg-slate-50 text-slate-900 overflow-hidden font-sans relative flex flex-col">
-      <div className="relative flex-1 w-full h-full overflow-hidden touch-none select-none">
+    <div className="w-full h-full flex-1 bg-slate-50 text-slate-900 overflow-hidden font-sans relative flex flex-row">
+      <LeftRecommendSidebar />
+      <div className="relative flex-1 w-full h-full overflow-hidden touch-none select-none min-w-0">
         <div className="absolute inset-0 flex w-full h-full bg-slate-50">
           <div className="relative flex-1 h-full touch-none">
             
@@ -395,7 +400,7 @@ export const RecommendPage = () => {
               nodesDraggable={false}
               panOnDrag={true}
               panOnScroll={true}
-              panOnScrollMode="free"
+              panOnScrollMode={PanOnScrollMode.Free}
               zoomOnScroll={true}
               zoomOnPinch={true}
               zoomOnDoubleClick={false}
@@ -416,13 +421,13 @@ export const RecommendPage = () => {
               />
               <Controls
                 showInteractive={false}
-                className="bg-white border border-slate-200 rounded-xl shadow-sm !left-4 sm:!left-6 !bottom-6 font-sans"
+                className="bg-white border border-slate-200 rounded-xl shadow-sm !left-3 sm:!left-6 !bottom-16 sm:!bottom-6 font-sans scale-90 sm:scale-100 origin-bottom-left"
               />
             </ReactFlow>
 
             {/* Export button — bottom-left floating panel */}
             {result && (
-              <div className="absolute bottom-6 left-16 sm:left-24 z-10 animate-fade-in">
+              <div className="absolute bottom-16 sm:bottom-6 left-[60px] sm:left-24 z-10 animate-fade-in">
                 <ExportButton query={input} result={result} />
               </div>
             )}
