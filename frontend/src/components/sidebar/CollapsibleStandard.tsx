@@ -24,6 +24,7 @@ export const CollapsibleStandard = ({
     (std.gazetteDocuments?.length || 0) +
     (std.productManuals?.length || 0);
 
+
   return (
     <div
       className={`transition-colors ${!isLast ? "border-b border-zinc-200" : ""
@@ -50,50 +51,58 @@ export const CollapsibleStandard = ({
       </div>
 
       {isExpanded && (
-        <div className="px-6 pb-6 pt-2 bg-white">
-          <div className="flex items-center bg-zinc-100 p-1 rounded-xl mb-5 gap-1 text-[12px]">
+        <div className="px-4 sm:px-6 pb-5 pt-2 bg-white">
+          <div className="grid grid-cols-3 bg-zinc-100 p-1 rounded-xl mb-4 gap-1 w-full overflow-hidden">
             <button
+              type="button"
               onClick={() => setActiveTab("overview")}
-              className={`flex-1 text-center py-1.5 px-2 rounded-[10.5px] text-[12px] font-medium uppercase tracking-wider transition-colors ${activeTab === "overview"
-                ? "bg-zinc-800 text-white"
-                : "text-zinc-600 hover:text-zinc-900"
-                }`}
+              className={`py-1.5 px-1 rounded-lg text-center text-[10px] sm:text-[11px] font-semibold uppercase tracking-wider transition-colors cursor-pointer truncate ${
+                activeTab === "overview"
+                  ? "bg-zinc-900 text-white shadow-2xs"
+                  : "text-zinc-600 hover:text-zinc-900"
+              }`}
             >
               Overview
             </button>
             <button
+              type="button"
               onClick={() => setActiveTab("compliance")}
-              className={`flex-1 text-center py-1.5 px-2 rounded-[10.5px] font-medium uppercase tracking-wider transition-colors flex items-center justify-center gap-1.5 ${activeTab === "compliance"
-                ? "bg-zinc-800 text-white"
-                : "text-zinc-600 hover:text-zinc-900"
-                }`}
+              className={`py-1.5 px-1 rounded-lg text-center text-[10px] sm:text-[11px] font-semibold uppercase tracking-wider transition-colors flex items-center justify-center gap-1 cursor-pointer min-w-0 ${
+                activeTab === "compliance"
+                  ? "bg-zinc-900 text-white shadow-2xs"
+                  : "text-zinc-600 hover:text-zinc-900"
+              }`}
             >
-              Compliance
+              <span className="truncate">Compliance</span>
               {complianceCount > 0 && (
                 <span
-                  className={`text-[10px] font-medium px-1.5 py-0.5 rounded-full ${activeTab === "compliance"
-                    ? "bg-zinc-700 text-white"
-                    : "bg-zinc-200 text-zinc-700"
-                    }`}
+                  className={`text-[9px] font-bold px-1.5 py-0.2 rounded-full flex-shrink-0 ${
+                    activeTab === "compliance"
+                      ? "bg-zinc-700 text-white"
+                      : "bg-zinc-200 text-zinc-700"
+                  }`}
                 >
                   {complianceCount}
                 </span>
               )}
             </button>
             <button
+              type="button"
               onClick={() => setActiveTab("documents")}
-              className={`flex-1 text-center py-1.5 px-2 rounded-[10.5px] font-medium uppercase tracking-wider transition-colors flex items-center justify-center gap-1.5 ${activeTab === "documents"
-                ? "bg-zinc-800 text-white"
-                : "text-zinc-600 hover:text-zinc-900"
-                }`}
+              className={`py-1.5 px-1 rounded-lg text-center text-[10px] sm:text-[11px] font-semibold uppercase tracking-wider transition-colors flex items-center justify-center gap-1 cursor-pointer min-w-0 ${
+                activeTab === "documents"
+                  ? "bg-zinc-900 text-white shadow-2xs"
+                  : "text-zinc-600 hover:text-zinc-900"
+              }`}
             >
-              Docs
+              <span className="truncate">Docs</span>
               {docsCount > 0 && (
                 <span
-                  className={`text-[10px] font-medium px-1.5 py-0.5 rounded-full ${activeTab === "documents"
-                    ? "bg-zinc-700 text-white"
-                    : "bg-zinc-200 text-zinc-700"
-                    }`}
+                  className={`text-[9px] font-bold px-1.5 py-0.2 rounded-full flex-shrink-0 ${
+                    activeTab === "documents"
+                      ? "bg-zinc-700 text-white"
+                      : "bg-zinc-200 text-zinc-700"
+                  }`}
                 >
                   {docsCount}
                 </span>
@@ -103,6 +112,19 @@ export const CollapsibleStandard = ({
 
           {activeTab === "overview" && (
             <div>
+              {std.url && (
+                <div className="mb-4">
+                  <a
+                    href={std.url}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="w-full inline-flex items-center justify-center gap-2 px-4 py-2.5 rounded-xl bg-blue-600 hover:bg-blue-700 active:scale-95 text-white text-xs font-bold transition-all shadow-xs cursor-pointer"
+                  >
+                    <i className="ph ph-arrow-square-out text-sm" />
+                    <span>View Standard on Official BIS Portal</span>
+                  </a>
+                </div>
+              )}
               <div className="flex items-start gap-4">
                 <div className="flex-1">
                   <DataRow

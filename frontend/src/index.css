@@ -23,6 +23,24 @@
   .react-flow__node {
     transition: transform 0.7s cubic-bezier(0.16, 1, 0.3, 1) !important;
   }
-
 }
+
+@media (max-width: 639px) {
+  .mobile-hide {
+    display: none !important;
+  }
+}
+
+@media (min-width: 640px) {
+  .desktop-show-flex {
+    display: flex !important;
+  }
+  .desktop-show-block {
+    display: block !important;
+  }
+  .desktop-show-inline {
+    display: inline-block !important;
+  }
+}
+
 
