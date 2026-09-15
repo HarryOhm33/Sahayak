@@ -80,10 +80,15 @@ export const Sidebar = () => {
       )}
 
       {/* Sidebar Overlay Container */}
-      <div ref={sidebarRef} className="absolute left-0 top-0 bottom-0 h-full z-40 select-none">
+      <div
+        ref={sidebarRef}
+        className={`absolute left-0 top-0 bottom-0 h-full z-40 select-none ${
+          isCollapsed ? "pointer-events-none" : "pointer-events-auto"
+        }`}
+      >
         {/* Main Sidebar Panel — Opens OVER content with shadow-2xl */}
         <aside
-          className={`h-full bg-white flex flex-col justify-between transition-all duration-300 ease-in-out flex-shrink-0 min-h-0 overflow-hidden shadow-2xl ${
+          className={`h-full bg-white flex flex-col justify-between transition-all duration-300 ease-in-out flex-shrink-0 min-h-0 overflow-hidden shadow-2xl pointer-events-auto ${
             isCollapsed
               ? "w-0 px-0 py-4 border-r-0 opacity-0"
               : "w-52 sm:w-56 px-3 py-4 border-r border-slate-200/90 opacity-100"

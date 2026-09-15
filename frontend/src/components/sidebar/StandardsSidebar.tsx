@@ -18,20 +18,25 @@ export const StandardsSidebar = ({
 
   return (
     <>
-      {/* Mobile Overlay Backdrop when open */}
+      {/* Mobile Backdrop Overlay when open (constrained inside main view) */}
       {isOpen && (
         <div
           onClick={onToggle}
-          className="fixed inset-0 bg-black/30 backdrop-blur-xs z-30 sm:hidden transition-opacity"
+          className="absolute inset-0 bg-black/20 backdrop-blur-2xs z-30 sm:hidden transition-opacity"
         />
       )}
 
-      <div className="relative flex-shrink-0 h-full z-40">
+      {/* Floating Overlay Container below Navbar */}
+      <div
+        className={`absolute right-0 top-0 bottom-0 h-full z-40 select-none ${
+          isOpen ? "pointer-events-auto" : "pointer-events-none"
+        }`}
+      >
         {/* Toggle Edge Button Tab */}
         <button
           type="button"
           onClick={onToggle}
-          className="absolute -left-6 sm:-left-5 top-1/2 -translate-y-1/2 z-50 w-6 h-14 sm:w-5 sm:h-16 bg-white border-y border-l border-zinc-200 rounded-l-xl flex items-center justify-center hover:bg-zinc-50 transition-colors focus:outline-none shadow-md cursor-pointer"
+          className="absolute -left-6 sm:-left-5 top-1/2 -translate-y-1/2 z-50 w-6 h-14 sm:w-5 sm:h-16 bg-white border-y border-l border-zinc-200 rounded-l-xl flex items-center justify-center hover:bg-zinc-50 transition-colors focus:outline-none shadow-md cursor-pointer pointer-events-auto"
           title={isOpen ? "Collapse Sidebar" : "Expand Sidebar"}
         >
           <i
@@ -41,14 +46,15 @@ export const StandardsSidebar = ({
           />
         </button>
 
-        {/* Sidebar Container */}
+        {/* Sidebar Container Panel */}
         <div
-          className={`h-full bg-white border-l border-zinc-200 flex flex-col overflow-hidden transition-all duration-300 ease-in-out shadow-xl sm:shadow-none ${
-            isOpen ? "w-[85vw] max-w-[420px] sm:w-[380px] md:w-[420px]" : "w-0"
+          className={`h-full bg-white border-l border-zinc-200 flex flex-col overflow-hidden transition-all duration-300 ease-in-out shadow-2xl ${
+            isOpen
+              ? "w-[85vw] max-w-[420px] sm:w-[380px] md:w-[420px] opacity-100"
+              : "w-0 opacity-0"
           }`}
         >
           <div className="w-[85vw] max-w-[420px] sm:w-[380px] md:w-[420px] h-full flex flex-col overflow-hidden relative flex-shrink-0">
-            
             {/* Top Header */}
             <div className="flex items-center justify-between px-4 sm:px-5 py-3.5 border-b border-slate-200 bg-white sticky top-0 z-10 flex-shrink-0 shadow-2xs">
               <div className="flex items-center gap-2.5">

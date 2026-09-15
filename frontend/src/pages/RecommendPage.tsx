@@ -1,5 +1,5 @@
 import { useState, useCallback, useEffect, useRef, type ChangeEvent, type DragEvent } from "react";
-import { useSearchParams, useLocation, Link } from "react-router-dom";
+import { useSearchParams, useLocation } from "react-router-dom";
 import ReactFlow, { Background, BackgroundVariant, Controls, PanOnScrollMode } from "reactflow";
 import "reactflow/dist/style.css";
 import "../App.css";
@@ -177,197 +177,196 @@ export const RecommendPage = () => {
   // =========================================================================
   if (appState !== "results") {
     return (
-      <div className="w-full h-full max-w-full overflow-hidden flex-1 bg-slate-50 text-slate-900 font-sans flex flex-row relative selection:bg-blue-100">
+      <div className="w-full h-full max-w-full overflow-hidden flex-1 bg-slate-50 text-slate-900 font-sans relative flex flex-col selection:bg-blue-100">
         <LeftRecommendSidebar />
-        <div className="flex-1 overflow-y-auto flex flex-col items-center justify-center min-w-0">
+        <div className="w-full h-full flex-1 overflow-y-auto flex flex-col items-center justify-center">
           <main className="flex-1 flex flex-col items-center justify-center px-3 sm:px-6 py-6 sm:py-8 max-w-2xl mx-auto w-full text-center">
             {/* Logo & Header */}
-          <div className="mb-6 flex flex-col items-center animate-fade-in">
-            <div className="w-12 h-12 rounded-xl bg-zinc-900 flex items-center justify-center shadow-md mb-3 p-2">
-              <img src="/favicon.svg" alt="Sahayak Logo" className="w-full h-full object-contain" />
+            <div className="mb-6 flex flex-col items-center animate-fade-in">
+              <div className="w-12 h-12 rounded-xl bg-zinc-900 flex items-center justify-center shadow-md mb-3 p-2">
+                <img src="/favicon.svg" alt="Sahayak Logo" className="w-full h-full object-contain" />
+              </div>
+              <div className="flex items-center gap-2.5 mb-1">
+                <h1 className="text-2xl sm:text-3xl font-extrabold tracking-tight text-slate-900">
+                  Sahayak
+                </h1>
+                <span className="text-[10px] font-bold uppercase tracking-wider bg-slate-100 text-slate-600 px-2.5 py-0.5 rounded-md border border-slate-200">
+                  AI Engine
+                </span>
+              </div>
+              <p className="text-xs font-semibold text-slate-500 uppercase tracking-widest">
+                Bureau of Indian Standards Copilot
+              </p>
             </div>
-            <div className="flex items-center gap-2.5 mb-1">
-              <h1 className="text-2xl sm:text-3xl font-extrabold tracking-tight text-slate-900">
-                Sahayak
-              </h1>
-              <span className="text-[10px] font-bold uppercase tracking-wider bg-slate-100 text-slate-600 px-2.5 py-0.5 rounded-md border border-slate-200">
-                AI Engine
-              </span>
-            </div>
-            <p className="text-xs font-semibold text-slate-500 uppercase tracking-widest">
-              Bureau of Indian Standards Copilot
-            </p>
-          </div>
 
-          {/* Error Banner if request failed */}
-          {appState === "error" && error && (
-            <div className="w-full mb-4 animate-fade-in text-left">
-              <div className="bg-white border border-red-200 rounded-xl p-4 flex items-start gap-3 shadow-xs">
-                <i className="ph ph-warning-circle text-xl text-red-600 mt-0.5 flex-shrink-0" />
-                <div className="flex-1">
-                  <div className="text-xs font-bold text-slate-800 uppercase tracking-wider mb-0.5">
-                    Request Failed
+            {/* Error Banner if request failed */}
+            {appState === "error" && error && (
+              <div className="w-full mb-4 animate-fade-in text-left">
+                <div className="bg-white border border-red-200 rounded-xl p-4 flex items-start gap-3 shadow-xs">
+                  <i className="ph ph-warning-circle text-xl text-red-600 mt-0.5 flex-shrink-0" />
+                  <div className="flex-1">
+                    <div className="text-xs font-bold text-slate-800 uppercase tracking-wider mb-0.5">
+                      Request Failed
+                    </div>
+                    <p className="text-xs text-slate-600 leading-relaxed">
+                      {error}
+                    </p>
+                    <p className="text-[11px] text-slate-400 mt-1 uppercase tracking-wider">
+                      Make sure the backend is running on port 3001
+                    </p>
                   </div>
-                  <p className="text-xs text-slate-600 leading-relaxed">
-                    {error}
-                  </p>
-                  <p className="text-[11px] text-slate-400 mt-1 uppercase tracking-wider">
-                    Make sure the backend is running on port 3001
-                  </p>
                 </div>
               </div>
-            </div>
-          )}
+            )}
 
-          {/* Normal HTML Card Box */}
-          <div
-            onDragOver={handleDragOver}
-            onDragLeave={handleDragLeave}
-            onDrop={handleDrop}
-            className={`bg-white border rounded-2xl w-full text-left transition-all shadow-sm ${
-              isDragging
-                ? "border-blue-500 ring-2 ring-blue-100 scale-[1.005]"
-                : appState === "loading"
-                ? "border-slate-300 shadow-md"
-                : "border-slate-200/90 hover:border-slate-300 focus-within:border-blue-500 focus-within:ring-2 focus-within:ring-blue-50"
-            }`}
-          >
-            {/* Standard Textarea */}
-            <textarea
-              ref={textareaRef}
-              value={input}
-              onChange={(e) => setInput(e.target.value)}
-              onKeyDown={(e) => {
-                if (e.key === "Enter" && !e.shiftKey) {
-                  e.preventDefault();
-                  handleSearch();
-                }
-              }}
-              disabled={appState === "loading"}
-              rows={3}
-              autoFocus
-              className="w-full bg-transparent px-4 sm:px-5 pt-4 pb-2 text-sm sm:text-[15px] font-medium text-slate-800 placeholder:text-slate-400 focus:outline-none resize-none leading-relaxed min-h-[105px] block disabled:opacity-70 cursor-text overflow-hidden"
-              placeholder="What product are you trying to get certified? (e.g. Outdoor LED street lights, 100W, 230V AC, IP66)..."
-            />
+            {/* Normal HTML Card Box */}
+            <div
+              onDragOver={handleDragOver}
+              onDragLeave={handleDragLeave}
+              onDrop={handleDrop}
+              className={`bg-white border rounded-2xl w-full text-left transition-all shadow-sm ${isDragging
+                  ? "border-blue-500 ring-2 ring-blue-100 scale-[1.005]"
+                  : appState === "loading"
+                    ? "border-slate-300 shadow-md"
+                    : "border-slate-200/90 hover:border-slate-300 focus-within:border-blue-500 focus-within:ring-2 focus-within:ring-blue-50"
+                }`}
+            >
+              {/* Standard Textarea */}
+              <textarea
+                ref={textareaRef}
+                value={input}
+                onChange={(e) => setInput(e.target.value)}
+                onKeyDown={(e) => {
+                  if (e.key === "Enter" && !e.shiftKey) {
+                    e.preventDefault();
+                    handleSearch();
+                  }
+                }}
+                disabled={appState === "loading"}
+                rows={3}
+                autoFocus
+                className="w-full bg-transparent px-4 sm:px-5 pt-4 pb-2 text-sm sm:text-[15px] font-medium text-slate-800 placeholder:text-slate-400 focus:outline-none resize-none leading-relaxed min-h-[105px] block disabled:opacity-70 cursor-text overflow-hidden"
+                placeholder="What product are you trying to get certified? (e.g. Outdoor LED street lights, 100W, 230V AC, IP66)..."
+              />
 
-            {/* Bordered File Upload Dropzone */}
-            <div className="px-4 sm:px-5 pb-3">
-              {attachedFile && appState !== "loading" ? (
-                <div className="flex items-center gap-3 bg-slate-50 border border-slate-200 rounded-xl p-2.5 animate-fade-in">
-                  <div className="w-8 h-8 rounded-lg bg-white border border-slate-200 flex items-center justify-center flex-shrink-0 text-blue-700 shadow-2xs">
-                    <i className={`ph-fill ${fileIcon(attachedFile.type)} text-lg`} />
-                  </div>
-                  <div className="flex-1 min-w-0">
-                    <span className="text-xs sm:text-[13px] font-semibold text-slate-800 truncate block">
-                      {attachedFile.name}
-                    </span>
-                    <span className="text-[11px] text-slate-400 block">
-                      {formatBytes(attachedFile.size)} &bull; Document attached
-                    </span>
-                  </div>
-                  <button
-                    type="button"
-                    onClick={() => setAttachedFile(null)}
-                    className="text-slate-400 hover:text-red-600 transition-colors p-1.5 rounded-lg hover:bg-slate-100 cursor-pointer"
-                    title="Remove file"
-                  >
-                    <i className="ph ph-trash text-base" />
-                  </button>
-                </div>
-              ) : (
-                <div
-                  onClick={() => fileInputRef.current?.click()}
-                  className="w-full border border-dashed border-slate-300 hover:border-blue-400 hover:bg-blue-50/40 rounded-xl py-2.5 px-3.5 flex items-center justify-between gap-3 text-left transition-all cursor-pointer group"
-                >
-                  <div className="flex items-center gap-2.5 text-slate-500 group-hover:text-blue-700 min-w-0">
-                    <i className="ph ph-paperclip text-lg text-slate-400 group-hover:text-blue-600 flex-shrink-0" />
-                    <div className="min-w-0">
-                      <span className="text-xs font-semibold text-slate-700 truncate block">
-                        Attach Tender Specification Document
+              {/* Bordered File Upload Dropzone */}
+              <div className="px-4 sm:px-5 pb-3">
+                {attachedFile && appState !== "loading" ? (
+                  <div className="flex items-center gap-3 bg-slate-50 border border-slate-200 rounded-xl p-2.5 animate-fade-in">
+                    <div className="w-8 h-8 rounded-lg bg-white border border-slate-200 flex items-center justify-center flex-shrink-0 text-blue-700 shadow-2xs">
+                      <i className={`ph-fill ${fileIcon(attachedFile.type)} text-lg`} />
+                    </div>
+                    <div className="flex-1 min-w-0">
+                      <span className="text-xs sm:text-[13px] font-semibold text-slate-800 truncate block">
+                        {attachedFile.name}
                       </span>
-                      <span className="text-[11px] text-slate-400 truncate block">
-                        PDF, DOCX, XLSX, TXT, images
+                      <span className="text-[11px] text-slate-400 block">
+                        {formatBytes(attachedFile.size)} &bull; Document attached
                       </span>
                     </div>
+                    <button
+                      type="button"
+                      onClick={() => setAttachedFile(null)}
+                      className="text-slate-400 hover:text-red-600 transition-colors p-1.5 rounded-lg hover:bg-slate-100 cursor-pointer"
+                      title="Remove file"
+                    >
+                      <i className="ph ph-trash text-base" />
+                    </button>
                   </div>
-                  <span className="text-[10px] font-bold text-blue-700 uppercase tracking-wider bg-blue-50 border border-blue-200 px-2.5 py-1 rounded-md transition-colors flex-shrink-0">
-                    Upload
+                ) : (
+                  <div
+                    onClick={() => fileInputRef.current?.click()}
+                    className="w-full border border-dashed border-slate-300 hover:border-blue-400 hover:bg-blue-50/40 rounded-xl py-2.5 px-3.5 flex items-center justify-between gap-3 text-left transition-all cursor-pointer group"
+                  >
+                    <div className="flex items-center gap-2.5 text-slate-500 group-hover:text-blue-700 min-w-0">
+                      <i className="ph ph-paperclip text-lg text-slate-400 group-hover:text-blue-600 flex-shrink-0" />
+                      <div className="min-w-0">
+                        <span className="text-xs font-semibold text-slate-700 truncate block">
+                          Attach Tender Specification Document
+                        </span>
+                        <span className="text-[11px] text-slate-400 truncate block">
+                          PDF, DOCX, XLSX, TXT, images
+                        </span>
+                      </div>
+                    </div>
+                    <span className="text-[10px] font-bold text-blue-700 uppercase tracking-wider bg-blue-50 border border-blue-200 px-2.5 py-1 rounded-md transition-colors flex-shrink-0">
+                      Upload
+                    </span>
+                  </div>
+                )}
+
+                <input
+                  ref={fileInputRef}
+                  type="file"
+                  accept={ACCEPTED_EXTENSIONS}
+                  onChange={handleFileInputChange}
+                  className="hidden"
+                />
+              </div>
+
+              {/* Loading Indicator */}
+              {appState === "loading" && (
+                <div className="px-4 sm:px-5 py-3 border-t border-slate-100 bg-slate-50 flex items-center justify-between gap-2 animate-fade-in rounded-b-2xl">
+                  <div className="flex items-center gap-2.5 min-w-0">
+                    <div className="flex gap-1 flex-shrink-0">
+                      <span className="w-1.5 h-1.5 bg-blue-600 rounded-full animate-bounce [animation-delay:0ms]" />
+                      <span className="w-1.5 h-1.5 bg-blue-600 rounded-full animate-bounce [animation-delay:150ms]" />
+                      <span className="w-1.5 h-1.5 bg-blue-600 rounded-full animate-bounce [animation-delay:300ms]" />
+                    </div>
+                    <span className="text-xs font-medium text-slate-600 truncate">
+                      {attachedFile
+                        ? `Analysing specification with ${attachedFile.name}…`
+                        : "Querying Indian Standards & normative references…"}
+                    </span>
+                  </div>
+                  <span className="text-[11px] font-semibold text-blue-700 uppercase tracking-wider flex-shrink-0">
+                    Processing
                   </span>
                 </div>
               )}
 
-              <input
-                ref={fileInputRef}
-                type="file"
-                accept={ACCEPTED_EXTENSIONS}
-                onChange={handleFileInputChange}
-                className="hidden"
-              />
-            </div>
-
-            {/* Loading Indicator */}
-            {appState === "loading" && (
-              <div className="px-4 sm:px-5 py-3 border-t border-slate-100 bg-slate-50 flex items-center justify-between gap-2 animate-fade-in rounded-b-2xl">
-                <div className="flex items-center gap-2.5 min-w-0">
-                  <div className="flex gap-1 flex-shrink-0">
-                    <span className="w-1.5 h-1.5 bg-blue-600 rounded-full animate-bounce [animation-delay:0ms]" />
-                    <span className="w-1.5 h-1.5 bg-blue-600 rounded-full animate-bounce [animation-delay:150ms]" />
-                    <span className="w-1.5 h-1.5 bg-blue-600 rounded-full animate-bounce [animation-delay:300ms]" />
-                  </div>
-                  <span className="text-xs font-medium text-slate-600 truncate">
-                    {attachedFile
-                      ? `Analysing specification with ${attachedFile.name}…`
-                      : "Querying Indian Standards & normative references…"}
+              {/* Bottom Actions Row */}
+              {appState !== "loading" && (
+                <div className="flex items-center justify-between gap-3 px-4 sm:px-5 py-3 border-t border-slate-100 bg-slate-50/60 rounded-b-2xl">
+                  <span className="text-[11px] text-slate-400 font-medium hidden sm:inline">
+                    Press <kbd className="font-mono bg-white border border-slate-200 px-1 py-0.5 rounded text-slate-600 text-[10px]">Enter</kbd> to search
                   </span>
+
+                  <button
+                    type="button"
+                    onClick={() => handleSearch()}
+                    disabled={!input.trim() && !attachedFile}
+                    className="w-full sm:w-auto justify-center px-6 py-2.5 bg-blue-600 hover:bg-blue-700 active:scale-95 text-white rounded-xl text-xs font-bold flex items-center gap-2 transition-all disabled:opacity-30 disabled:cursor-not-allowed cursor-pointer shadow-sm shadow-blue-600/20 ml-auto"
+                  >
+                    <span>Analyze Standards</span>
+                    <i className="ph ph-arrow-right text-sm" />
+                  </button>
                 </div>
-                <span className="text-[11px] font-semibold text-blue-700 uppercase tracking-wider flex-shrink-0">
-                  Processing
-                </span>
-              </div>
-            )}
-
-            {/* Bottom Actions Row */}
-            {appState !== "loading" && (
-              <div className="flex items-center justify-between gap-3 px-4 sm:px-5 py-3 border-t border-slate-100 bg-slate-50/60 rounded-b-2xl">
-                <span className="text-[11px] text-slate-400 font-medium hidden sm:inline">
-                  Press <kbd className="font-mono bg-white border border-slate-200 px-1 py-0.5 rounded text-slate-600 text-[10px]">Enter</kbd> to search
-                </span>
-
-                <button
-                  type="button"
-                  onClick={() => handleSearch()}
-                  disabled={!input.trim() && !attachedFile}
-                  className="w-full sm:w-auto justify-center px-6 py-2.5 bg-blue-600 hover:bg-blue-700 active:scale-95 text-white rounded-xl text-xs font-bold flex items-center gap-2 transition-all disabled:opacity-30 disabled:cursor-not-allowed cursor-pointer shadow-sm shadow-blue-600/20 ml-auto"
-                >
-                  <span>Analyze Standards</span>
-                  <i className="ph ph-arrow-right text-sm" />
-                </button>
-              </div>
-            )}
-          </div>
-
-          {/* Quick Example Query Pills */}
-          <div className="mt-8 flex flex-col items-center gap-2.5 w-full animate-fade-in">
-            <span className="text-[11px] font-bold text-slate-400 uppercase tracking-wider">
-              Sample Queries
-            </span>
-            <div className="flex flex-wrap justify-center gap-2 max-w-xl">
-              {EXAMPLE_QUERIES.map((eq) => (
-                <button
-                  key={eq.label}
-                  type="button"
-                  onClick={() => {
-                    setInput(eq.query);
-                    handleSearch(eq.query);
-                  }}
-                  className="bg-white border border-slate-200 hover:border-blue-300 hover:bg-blue-50 text-[12px] font-semibold text-slate-700 hover:text-blue-700 px-3.5 py-1.5 rounded-full transition-all cursor-pointer shadow-2xs text-left"
-                >
-                  {eq.label}
-                </button>
-              ))}
+              )}
             </div>
-          </div>
-        </main>
+
+            {/* Quick Example Query Pills */}
+            <div className="mt-8 flex flex-col items-center gap-2.5 w-full animate-fade-in">
+              <span className="text-[11px] font-bold text-slate-400 uppercase tracking-wider">
+                Sample Queries
+              </span>
+              <div className="flex flex-wrap justify-center gap-2 max-w-xl">
+                {EXAMPLE_QUERIES.map((eq) => (
+                  <button
+                    key={eq.label}
+                    type="button"
+                    onClick={() => {
+                      setInput(eq.query);
+                      handleSearch(eq.query);
+                    }}
+                    className="bg-white border border-slate-200 hover:border-blue-300 hover:bg-blue-50 text-[12px] font-semibold text-slate-700 hover:text-blue-700 px-3.5 py-1.5 rounded-full transition-all cursor-pointer shadow-2xs text-left"
+                  >
+                    {eq.label}
+                  </button>
+                ))}
+              </div>
+            </div>
+          </main>
         </div>
       </div>
     );
@@ -377,12 +376,12 @@ export const RecommendPage = () => {
   // VIEW 2: REACTFLOW GRAPH (Rendered ONLY when data from backend arrives!)
   // =========================================================================
   return (
-    <div className="w-full h-full flex-1 bg-slate-50 text-slate-900 overflow-hidden font-sans relative flex flex-row">
+    <div className="w-full h-full flex-1 bg-slate-50 text-slate-900 overflow-hidden font-sans relative">
       <LeftRecommendSidebar />
-      <div className="relative flex-1 w-full h-full overflow-hidden touch-none select-none min-w-0">
+      <div className="relative flex-1 w-full h-full overflow-hidden touch-none select-none">
         <div className="absolute inset-0 flex w-full h-full bg-slate-50">
           <div className="relative flex-1 h-full touch-none">
-            
+
             {/* Notification badge */}
             <div className="absolute top-4 right-6 z-10 hidden sm:flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-white/95 border border-slate-200 text-[11px] font-semibold text-slate-700 shadow-sm backdrop-blur-xs select-none pointer-events-none">
               <i className="ph ph-tree-structure text-sm text-blue-600" />
