@@ -421,13 +421,13 @@ export const RecommendPage = () => {
               />
               <Controls
                 showInteractive={false}
-                className="bg-white border border-slate-200 rounded-xl shadow-sm !left-3 sm:!left-6 !bottom-16 sm:!bottom-6 font-sans scale-90 sm:scale-100 origin-bottom-left"
+                className="bg-white border border-slate-200 rounded-xl shadow-sm !left-3 sm:!left-6 !bottom-24 sm:!bottom-12 font-sans scale-90 sm:scale-100 origin-bottom-left"
               />
             </ReactFlow>
 
             {/* Export button — bottom-left floating panel */}
             {result && (
-              <div className="absolute bottom-16 sm:bottom-6 left-[60px] sm:left-24 z-10 animate-fade-in">
+              <div className="absolute bottom-24 sm:bottom-12 left-[60px] sm:left-24 z-10 animate-fade-in">
                 <ExportButton query={input} result={result} />
               </div>
             )}
