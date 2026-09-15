@@ -177,9 +177,9 @@ export const RecommendPage = () => {
   // =========================================================================
   if (appState !== "results") {
     return (
-      <div className="w-full h-full max-w-full overflow-hidden flex-1 bg-slate-50 text-slate-900 font-sans relative flex flex-col selection:bg-blue-100">
+      <div className="w-full h-full max-w-full overflow-hidden flex-1 bg-slate-50 text-slate-900 font-sans relative flex flex-col min-h-0 selection:bg-blue-100">
         <LeftRecommendSidebar />
-        <div className="w-full h-full flex-1 overflow-y-auto flex flex-col items-center justify-center">
+        <div className="w-full h-full flex-1 overflow-y-auto flex flex-col items-center justify-center min-h-0">
           <main className="flex-1 flex flex-col items-center justify-center px-3 sm:px-6 py-6 sm:py-8 max-w-2xl mx-auto w-full text-center">
             {/* Logo & Header */}
             <div className="mb-6 flex flex-col items-center animate-fade-in">
@@ -225,10 +225,10 @@ export const RecommendPage = () => {
               onDragLeave={handleDragLeave}
               onDrop={handleDrop}
               className={`bg-white border rounded-2xl w-full text-left transition-all shadow-sm ${isDragging
-                  ? "border-blue-500 ring-2 ring-blue-100 scale-[1.005]"
-                  : appState === "loading"
-                    ? "border-slate-300 shadow-md"
-                    : "border-slate-200/90 hover:border-slate-300 focus-within:border-blue-500 focus-within:ring-2 focus-within:ring-blue-50"
+                ? "border-blue-500 ring-2 ring-blue-100 scale-[1.005]"
+                : appState === "loading"
+                  ? "border-slate-300 shadow-md"
+                  : "border-slate-200/90 hover:border-slate-300 focus-within:border-blue-500 focus-within:ring-2 focus-within:ring-blue-50"
                 }`}
             >
               {/* Standard Textarea */}
@@ -376,7 +376,7 @@ export const RecommendPage = () => {
   // VIEW 2: REACTFLOW GRAPH (Rendered ONLY when data from backend arrives!)
   // =========================================================================
   return (
-    <div className="w-full h-full flex-1 bg-slate-50 text-slate-900 overflow-hidden font-sans relative">
+    <div className="w-full h-full max-h-full flex-1 bg-slate-50 text-slate-900 overflow-hidden font-sans relative min-h-0">
       <LeftRecommendSidebar />
       <div className="relative flex-1 w-full h-full overflow-hidden touch-none select-none">
         <div className="absolute inset-0 flex w-full h-full bg-slate-50">
@@ -420,13 +420,13 @@ export const RecommendPage = () => {
               />
               <Controls
                 showInteractive={false}
-                className="bg-white border border-slate-200 rounded-xl shadow-sm !left-3 sm:!left-6 !bottom-10 sm:!bottom-6 font-sans scale-90 sm:scale-100 origin-bottom-left"
+                className="bg-white border border-slate-200 rounded-xl shadow-sm !left-3 sm:!left-6 !bottom-5 sm:!bottom-6 font-sans scale-90 sm:scale-100 origin-bottom-left"
               />
             </ReactFlow>
 
             {/* Export button — bottom-left floating panel */}
             {result && (
-              <div className="absolute bottom-10 sm:bottom-6 left-[60px] sm:left-24 z-10 animate-fade-in">
+              <div className="absolute bottom-5 sm:bottom-6 left-[60px] sm:left-24 z-10 animate-fade-in">
                 <ExportButton query={input} result={result} />
               </div>
             )}
