@@ -3,25 +3,29 @@ import { Link, useNavigate } from "react-router-dom";
 const SUGGESTED_PRODUCTS = [
   {
     title: "Distribution Transformer",
-    query: "500 kVA, 11kV/433V outdoor distribution transformer for municipal substation use",
+    query:
+      "500 kVA, 11kV/433V outdoor distribution transformer for municipal substation use",
     category: "Electrical & Power",
     code: "IS 1180",
   },
   {
     title: "LED Street Lighting",
-    query: "LED Street Lighting luminaires with surge protection for urban roads and highways",
+    query:
+      "LED Street Lighting luminaires with surge protection for urban roads and highways.",
     category: "Lighting & Electronics",
     code: "IS 10322",
   },
   {
     title: "Solar PV Modules",
-    query: "Crystalline Silicon Terrestrial Photovoltaic (PV) Modules for utility solar projects",
+    query:
+      "Crystalline Silicon Terrestrial Photovoltaic (PV) Modules for utility solar projects",
     category: "Renewable Energy",
     code: "IS 14286",
   },
   {
     title: "Reinforced Concrete Pipes",
-    query: "Precast reinforced concrete pipes for drainage culverts and sewerage works",
+    query:
+      "Precast reinforced concrete pipes for drainage culverts and sewerage works",
     category: "Civil & Infrastructure",
     code: "IS 458",
   },
@@ -64,11 +68,12 @@ export const HomePage = () => {
   return (
     <div className="flex-1 bg-slate-50 text-slate-900 flex flex-col font-sans overflow-y-auto">
       <main className="flex-1 max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 pt-10 sm:pt-16 md:pt-20 pb-16 sm:pb-20 w-full flex flex-col items-center text-center">
-        
         {/* Badge */}
         <div className="inline-flex items-center gap-2 px-3 sm:px-4 py-1.5 rounded-full border border-blue-200 bg-blue-50 text-xs font-semibold text-blue-800 mb-5 sm:mb-6 max-w-full truncate shadow-2xs">
           <span className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse flex-shrink-0" />
-          <span className="truncate">Bureau of Indian Standards &bull; Smart Tender Intelligence</span>
+          <span className="truncate">
+            Bureau of Indian Standards &bull; Smart Tender Intelligence
+          </span>
         </div>
 
         {/* Headline */}
@@ -77,7 +82,9 @@ export const HomePage = () => {
         </h1>
 
         <p className="text-sm sm:text-base md:text-lg text-slate-600 max-w-2xl leading-relaxed mb-8 sm:mb-10 font-medium">
-          Empowering procurement officers, engineering departments, and auditors to instantly identify applicable IS codes, normative references, and mandatory certifications.
+          Empowering procurement officers, engineering departments, and auditors
+          to instantly identify applicable IS codes, normative references, and
+          mandatory certifications.
         </p>
 
         {/* Call to action buttons */}
@@ -148,7 +155,10 @@ export const HomePage = () => {
         </div>
 
         {/* Capabilities Grid */}
-        <div id="capabilities" className="w-full border-t border-slate-200/80 pt-14 sm:pt-20">
+        <div
+          id="capabilities"
+          className="w-full border-t border-slate-200/80 pt-14 sm:pt-20"
+        >
           <div className="text-center mb-10 sm:mb-12">
             <div className="text-[11px] font-bold text-blue-700 uppercase tracking-widest bg-blue-50 px-2.5 py-1 rounded-md border border-blue-200 inline-block mb-2">
               Core Intelligence
@@ -183,11 +193,16 @@ export const HomePage = () => {
       <footer className="w-full border-t border-slate-200 bg-white py-6">
         <div className="max-w-6xl mx-auto px-4 sm:px-6 flex flex-col sm:flex-row items-center justify-between gap-3 text-center sm:text-left text-xs text-slate-500">
           <div className="flex flex-wrap items-center justify-center sm:justify-start gap-2">
-            <span className="font-bold text-slate-800">Bureau of Indian Standards</span>
+            <span className="font-bold text-slate-800">
+              Bureau of Indian Standards
+            </span>
             <span>&bull; DoCA, Govt. of India</span>
           </div>
           <div className="flex items-center gap-4 sm:gap-6">
-            <Link to="/recommend" className="hover:text-blue-700 transition-colors font-semibold">
+            <Link
+              to="/recommend"
+              className="hover:text-blue-700 transition-colors font-semibold"
+            >
               Launch Recommend Canvas
             </Link>
             <span className="text-slate-300">|</span>
