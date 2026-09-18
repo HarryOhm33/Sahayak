@@ -383,7 +383,7 @@ export const RecommendPage = () => {
         <LeftRecommendSidebar />
         <div className="relative flex-1 w-full h-full overflow-hidden flex flex-col">
           <div className="relative flex-1 flex w-full h-full bg-slate-50 overflow-hidden">
-            
+
             {viewMode === "tabs" ? (
               <TabbedView groupedStandards={groupedStandards} query={input} attachedFile={attachedFile} />
             ) : (
@@ -445,17 +445,16 @@ export const RecommendPage = () => {
               </div>
             )}
           </div>
-          
+
           {/* Floating View Switcher */}
           <div className="absolute bottom-6 left-6 z-20 flex items-center bg-white/95 backdrop-blur p-1 rounded-full border border-slate-200">
             <button
               type="button"
               onClick={() => setViewMode("tabs")}
-              className={`flex items-center gap-1.5 px-3 py-1.5 rounded-full text-[11px] font-bold uppercase tracking-wider transition-all cursor-pointer ${
-                viewMode === "tabs"
+              className={`flex items-center gap-1.5 px-3 py-1.5 rounded-full text-[11px] font-bold uppercase tracking-wider transition-all cursor-pointer ${viewMode === "tabs"
                   ? "bg-blue-600 text-white"
                   : "bg-transparent text-slate-500 hover:text-slate-800 hover:bg-slate-100"
-              }`}
+                }`}
             >
               <i className="ph ph-table text-[14px]" />
               Tabs
@@ -463,21 +462,14 @@ export const RecommendPage = () => {
             <button
               type="button"
               onClick={() => setViewMode("graph")}
-              className={`flex items-center gap-1.5 px-3 py-1.5 rounded-full text-[11px] font-bold uppercase tracking-wider transition-all cursor-pointer ${
-                viewMode === "graph"
+              className={`flex items-center gap-1.5 px-3 py-1.5 rounded-full text-[11px] font-bold uppercase tracking-wider transition-all cursor-pointer ${viewMode === "graph"
                   ? "bg-blue-600 text-white"
                   : "bg-transparent text-slate-500 hover:text-slate-800 hover:bg-slate-100"
-              }`}
+                }`}
             >
               <i className="ph ph-tree-structure text-[14px]" />
               Graph
             </button>
-          </div>
-
-          {/* Floating Verified Badge */}
-          <div className="absolute bottom-6 right-6 z-20 hidden sm:flex items-center gap-2 text-[11px] font-bold text-emerald-700 bg-emerald-50/90 backdrop-blur-sm px-3.5 py-2 rounded-xl border border-emerald-200/80 pointer-events-none">
-            <i className="ph-fill ph-seal-check text-base" />
-            <span className="uppercase tracking-wider">All standards verified by BIS</span>
           </div>
         </div>
       </div>
