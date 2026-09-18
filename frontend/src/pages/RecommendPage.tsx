@@ -11,6 +11,7 @@ import { ExportButton } from "../components/export/ExportButton";
 import { useGraphLayout } from "../hooks/useGraphLayout";
 import { useRecommend } from "../hooks/useRecommend";
 import { QUERY_NODE_DEFAULT_HEIGHT } from "../constants/layout";
+import { TabbedView } from "../components/tabs/TabbedView";
 
 type AppState = "idle" | "loading" | "results" | "error";
 
@@ -59,6 +60,7 @@ export const RecommendPage = () => {
   const [queryNodeHeight, setQueryNodeHeight] = useState(QUERY_NODE_DEFAULT_HEIGHT);
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const [isDragging, setIsDragging] = useState(false);
+  const [viewMode, setViewMode] = useState<"tabs" | "graph">("tabs");
 
   const textareaRef = useRef<HTMLTextAreaElement>(null);
   const fileInputRef = useRef<HTMLInputElement>(null);
@@ -183,7 +185,7 @@ export const RecommendPage = () => {
           <main className="flex-1 flex flex-col items-center justify-center px-3 sm:px-6 py-6 sm:py-8 max-w-2xl mx-auto w-full text-center">
             {/* Logo & Header */}
             <div className="mb-6 flex flex-col items-center animate-fade-in">
-              <div className="w-12 h-12 rounded-xl bg-zinc-900 flex items-center justify-center shadow-md mb-3 p-2">
+              <div className="w-12 h-12 rounded-xl bg-zinc-900 flex items-center justify-center mb-3 p-2 border border-zinc-800">
                 <img src="/favicon.svg" alt="Sahayak Logo" className="w-full h-full object-contain" />
               </div>
               <div className="flex items-center gap-2.5 mb-1">
@@ -202,7 +204,7 @@ export const RecommendPage = () => {
             {/* Error Banner if request failed */}
             {appState === "error" && error && (
               <div className="w-full mb-4 animate-fade-in text-left">
-                <div className="bg-white border border-red-200 rounded-xl p-4 flex items-start gap-3 shadow-xs">
+                <div className="bg-white border border-red-200 rounded-xl p-4 flex items-start gap-3">
                   <i className="ph ph-warning-circle text-xl text-red-600 mt-0.5 flex-shrink-0" />
                   <div className="flex-1">
                     <div className="text-xs font-bold text-slate-800 uppercase tracking-wider mb-0.5">
@@ -224,10 +226,10 @@ export const RecommendPage = () => {
               onDragOver={handleDragOver}
               onDragLeave={handleDragLeave}
               onDrop={handleDrop}
-              className={`bg-white border rounded-2xl w-full text-left transition-all shadow-sm ${isDragging
+              className={`bg-white border rounded-2xl w-full text-left transition-all ${isDragging
                 ? "border-blue-500 ring-2 ring-blue-100 scale-[1.005]"
                 : appState === "loading"
-                  ? "border-slate-300 shadow-md"
+                  ? "border-slate-300"
                   : "border-slate-200/90 hover:border-slate-300 focus-within:border-blue-500 focus-within:ring-2 focus-within:ring-blue-50"
                 }`}
             >
@@ -253,7 +255,7 @@ export const RecommendPage = () => {
               <div className="px-4 sm:px-5 pb-3">
                 {attachedFile && appState !== "loading" ? (
                   <div className="flex items-center gap-3 bg-slate-50 border border-slate-200 rounded-xl p-2.5 animate-fade-in">
-                    <div className="w-8 h-8 rounded-lg bg-white border border-slate-200 flex items-center justify-center flex-shrink-0 text-blue-700 shadow-2xs">
+                    <div className="w-8 h-8 rounded-lg bg-white border border-slate-200 flex items-center justify-center flex-shrink-0 text-blue-700">
                       <i className={`ph-fill ${fileIcon(attachedFile.type)} text-lg`} />
                     </div>
                     <div className="flex-1 min-w-0">
@@ -336,7 +338,7 @@ export const RecommendPage = () => {
                     type="button"
                     onClick={() => handleSearch()}
                     disabled={!input.trim() && !attachedFile}
-                    className="w-full sm:w-auto justify-center px-6 py-2.5 bg-blue-600 hover:bg-blue-700 active:scale-95 text-white rounded-xl text-xs font-bold flex items-center gap-2 transition-all disabled:opacity-30 disabled:cursor-not-allowed cursor-pointer shadow-sm shadow-blue-600/20 ml-auto"
+                    className="w-full sm:w-auto justify-center px-6 py-2.5 bg-blue-600 hover:bg-blue-700 active:scale-95 text-white rounded-xl text-xs font-bold flex items-center gap-2 transition-all disabled:opacity-30 disabled:cursor-not-allowed cursor-pointer ml-auto"
                   >
                     <span>Analyze Standards</span>
                     <i className="ph ph-arrow-right text-sm" />
@@ -359,7 +361,7 @@ export const RecommendPage = () => {
                       setInput(eq.query);
                       handleSearch(eq.query);
                     }}
-                    className="bg-white border border-slate-200 hover:border-blue-300 hover:bg-blue-50 text-[12px] font-semibold text-slate-700 hover:text-blue-700 px-3.5 py-1.5 rounded-full transition-all cursor-pointer shadow-2xs text-left"
+                    className="bg-white border border-slate-200 hover:border-blue-300 hover:bg-blue-50 text-[12px] font-semibold text-slate-700 hover:text-blue-700 px-3.5 py-1.5 rounded-full transition-all cursor-pointer text-left"
                   >
                     {eq.label}
                   </button>
@@ -373,72 +375,110 @@ export const RecommendPage = () => {
   }
 
   // =========================================================================
-  // VIEW 2: REACTFLOW GRAPH (Rendered ONLY when data from backend arrives!)
+  // VIEW 2: RESULTS VIEW (Tabs or Graph)
   // =========================================================================
   return (
-    <div className="w-full h-full max-h-full flex-1 bg-slate-50 text-slate-900 overflow-hidden font-sans relative min-h-0">
-      <LeftRecommendSidebar />
-      <div className="relative flex-1 w-full h-full overflow-hidden touch-none select-none">
-        <div className="absolute inset-0 flex w-full h-full bg-slate-50">
-          <div className="relative flex-1 h-full touch-none">
+    <div className="w-full h-full max-h-full flex-1 bg-slate-50 text-slate-900 overflow-hidden font-sans relative min-h-0 flex flex-col">
+      <div className="flex flex-1 overflow-hidden min-h-0">
+        <LeftRecommendSidebar />
+        <div className="relative flex-1 w-full h-full overflow-hidden flex flex-col">
+          <div className="relative flex-1 flex w-full h-full bg-slate-50 overflow-hidden">
+            
+            {viewMode === "tabs" ? (
+              <TabbedView groupedStandards={groupedStandards} query={input} attachedFile={attachedFile} />
+            ) : (
+              <div className="relative flex-1 h-full touch-none select-none">
+                {/* Notification badge */}
+                <div className="absolute top-4 right-6 z-10 hidden sm:flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-white/95 border border-slate-200 text-[11px] font-semibold text-slate-700 backdrop-blur-xs select-none pointer-events-none">
+                  <i className="ph ph-tree-structure text-sm text-blue-600" />
+                  <span>Standards Relationship Map &bull; Drag nodes or pan canvas freely</span>
+                </div>
 
-            {/* Notification badge */}
-            <div className="absolute top-4 right-6 z-10 hidden sm:flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-white/95 border border-slate-200 text-[11px] font-semibold text-slate-700 shadow-sm backdrop-blur-xs select-none pointer-events-none">
-              <i className="ph ph-tree-structure text-sm text-blue-600" />
-              <span>Standards Relationship Map &bull; Drag nodes or pan canvas freely</span>
-            </div>
+                {/* Interactive ReactFlow Graph Canvas */}
+                <ReactFlow
+                  nodes={nodes}
+                  edges={edges}
+                  nodeTypes={nodeTypes}
+                  minZoom={0.1}
+                  maxZoom={2.0}
+                  defaultViewport={typeof window !== "undefined" && window.innerWidth < 640 ? { x: -30, y: 20, zoom: 0.6 } : undefined}
+                  nodesDraggable={false}
+                  panOnDrag={true}
+                  panOnScroll={true}
+                  panOnScrollMode={PanOnScrollMode.Free}
+                  zoomOnScroll={true}
+                  zoomOnPinch={true}
+                  zoomOnDoubleClick={false}
+                  elementsSelectable={true}
+                  preventScrolling={true}
+                  proOptions={{ hideAttribution: true }}
+                  onNodeClick={(_event, node) => {
+                    if (node.type === "groupNode") {
+                      onNodeSelect(node.id);
+                    }
+                  }}
+                >
+                  <Background
+                    gap={24}
+                    size={1}
+                    variant={BackgroundVariant.Dots}
+                    color="#cbd5e1"
+                  />
+                </ReactFlow>
+              </div>
+            )}
 
-            {/* Interactive ReactFlow Graph Canvas */}
-            <ReactFlow
-              nodes={nodes}
-              edges={edges}
-              nodeTypes={nodeTypes}
-              minZoom={0.1}
-              maxZoom={2.0}
-              defaultViewport={typeof window !== "undefined" && window.innerWidth < 640 ? { x: -30, y: 20, zoom: 0.6 } : undefined}
-              nodesDraggable={false}
-              panOnDrag={true}
-              panOnScroll={true}
-              panOnScrollMode={PanOnScrollMode.Free}
-              zoomOnScroll={true}
-              zoomOnPinch={true}
-              zoomOnDoubleClick={false}
-              elementsSelectable={true}
-              preventScrolling={true}
-              proOptions={{ hideAttribution: true }}
-              onNodeClick={(_event, node) => {
-                if (node.type === "groupNode") {
-                  onNodeSelect(node.id);
-                }
-              }}
-            >
-              <Background
-                gap={24}
-                size={1}
-                variant={BackgroundVariant.Dots}
-                color="#cbd5e1"
+            {/* Details Sidebar (only show in graph view or if explicitly needed, but for now kept as before) */}
+            {viewMode === "graph" && (
+              <StandardsSidebar
+                isOpen={sidebarOpen}
+                isVisible={true}
+                standards={standardsInSelectedGroup}
+                onToggle={() => setSidebarOpen((o) => !o)}
               />
-              <Controls
-                showInteractive={false}
-                className="bg-white border border-slate-200 rounded-xl shadow-sm !left-3 sm:!left-6 !bottom-5 sm:!bottom-6 font-sans scale-90 sm:scale-100 origin-bottom-left"
-              />
-            </ReactFlow>
+            )}
 
-            {/* Export button — bottom-left floating panel */}
+            {/* Export button — floating panel aligned left */}
             {result && (
-              <div className="absolute bottom-5 sm:bottom-6 left-[60px] sm:left-24 z-10 animate-fade-in">
+              <div className="absolute bottom-20 left-6 z-20 animate-fade-in">
                 <ExportButton query={input} result={result} />
               </div>
             )}
           </div>
+          
+          {/* Floating View Switcher */}
+          <div className="absolute bottom-6 left-6 z-20 flex items-center bg-white/95 backdrop-blur p-1 rounded-full border border-slate-200">
+            <button
+              type="button"
+              onClick={() => setViewMode("tabs")}
+              className={`flex items-center gap-1.5 px-3 py-1.5 rounded-full text-[11px] font-bold uppercase tracking-wider transition-all cursor-pointer ${
+                viewMode === "tabs"
+                  ? "bg-blue-600 text-white"
+                  : "bg-transparent text-slate-500 hover:text-slate-800 hover:bg-slate-100"
+              }`}
+            >
+              <i className="ph ph-table text-[14px]" />
+              Tabs
+            </button>
+            <button
+              type="button"
+              onClick={() => setViewMode("graph")}
+              className={`flex items-center gap-1.5 px-3 py-1.5 rounded-full text-[11px] font-bold uppercase tracking-wider transition-all cursor-pointer ${
+                viewMode === "graph"
+                  ? "bg-blue-600 text-white"
+                  : "bg-transparent text-slate-500 hover:text-slate-800 hover:bg-slate-100"
+              }`}
+            >
+              <i className="ph ph-tree-structure text-[14px]" />
+              Graph
+            </button>
+          </div>
 
-          {/* Details Sidebar */}
-          <StandardsSidebar
-            isOpen={sidebarOpen}
-            isVisible={true}
-            standards={standardsInSelectedGroup}
-            onToggle={() => setSidebarOpen((o) => !o)}
-          />
+          {/* Floating Verified Badge */}
+          <div className="absolute bottom-6 right-6 z-20 hidden sm:flex items-center gap-2 text-[11px] font-bold text-emerald-700 bg-emerald-50/90 backdrop-blur-sm px-3.5 py-2 rounded-xl border border-emerald-200/80 pointer-events-none">
+            <i className="ph-fill ph-seal-check text-base" />
+            <span className="uppercase tracking-wider">All standards verified by BIS</span>
+          </div>
         </div>
       </div>
     </div>

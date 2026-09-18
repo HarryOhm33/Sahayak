@@ -39,10 +39,10 @@ export const ExportButton = ({ query, result }: ExportButtonProps) => {
     : state === "error"   ? "ph-warning-circle"
     : "ph-cloud-arrow-down";
 
-  const colorCls =
-    state === "done"    ? "bg-emerald-600 text-white hover:bg-emerald-700"
-    : state === "error" ? "bg-red-500 text-white"
-    : "bg-zinc-900 text-white hover:bg-zinc-800";
+    const colorCls =
+      state === "done"    ? "bg-emerald-600 text-white hover:bg-emerald-700"
+      : state === "error" ? "bg-red-500 text-white"
+      : "bg-blue-600 text-white hover:bg-blue-700 shadow-sm border border-blue-500";
 
   return (
     <button

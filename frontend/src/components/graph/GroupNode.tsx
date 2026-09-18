@@ -39,10 +39,6 @@ const StandardCard = ({ std, bottomBorder, rightBorder = false }: CardProps) => 
             <span className="text-sm font-extrabold text-slate-900 tracking-tight">
               {std.number}
             </span>
-            <span className="inline-flex items-center gap-1 text-[9px] font-bold uppercase tracking-wider px-1.5 py-0.5 bg-emerald-50 text-emerald-800 border border-emerald-200/90 rounded-md shadow-2xs">
-              <i className="ph-fill ph-seal-check text-emerald-600 text-xs" />
-              Verified from BIS
-            </span>
           </div>
           <div className="text-[11px] font-semibold text-slate-400 flex-shrink-0">
             {std.edition}
@@ -145,7 +141,7 @@ export const GroupNode = ({ data }: { data: GroupNodeData }) => {
 
   return (
     <div
-      className="relative bg-white rounded-xl border border-slate-200 shadow-md cursor-pointer overflow-hidden transition-all hover:shadow-lg"
+      className="relative bg-white rounded-xl border border-slate-200 cursor-pointer overflow-hidden transition-all hover:bg-slate-50"
       style={{ width: nodeWidth }}
       onClick={(e) => {
         e.stopPropagation();

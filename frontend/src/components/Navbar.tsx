@@ -15,14 +15,23 @@ export const Navbar = () => {
 
   return (
     <header className="w-full border-b border-slate-200 bg-white relative z-50 flex-shrink-0 shadow-xs max-w-full overflow-x-hidden">
-      <div className="max-w-7xl mx-auto px-3 sm:px-6 h-16 flex items-center justify-between gap-3 sm:gap-4">
-        
-        {/* Left Section */}
+      <div className="mx-auto px-3 sm:px-6 h-16 flex items-center justify-between gap-3 sm:gap-4">
+
         <div className="flex items-center gap-2 sm:gap-3.5 min-w-0">
+          <button
+            id="navbar-sidebar-toggle"
+            type="button"
+            onClick={() => window.dispatchEvent(new CustomEvent("toggleSidebar"))}
+            className="w-9 h-9 sm:w-10 sm:h-10 rounded-xl bg-slate-50 border border-slate-200 text-slate-500 hover:text-slate-800 hover:bg-slate-100 flex items-center justify-center transition-all cursor-pointer flex-shrink-0 mr-1"
+            title="Toggle Navigation Sidebar"
+          >
+            <i className="ph ph-sidebar-simple text-lg sm:text-xl" />
+          </button>
+
           <Link to="/" className="flex items-center gap-2 sm:gap-3 focus:outline-none flex-shrink-0">
-            
+
             {/* Sahayak Logo Icon Box */}
-            <div className="w-8 h-8 sm:w-9 sm:h-9 rounded-md bg-zinc-900 flex items-center justify-center shadow-xs transition-transform hover:scale-105 flex-shrink-0 p-1.5">
+            <div className="w-8 h-8 sm:w-9 sm:h-9 rounded-md flex items-center justify-center shadow-xs transition-transform hover:scale-105 flex-shrink-0">
               <img src="/favicon.svg" alt="Sahayak Logo" className="w-full h-full object-contain" />
             </div>
 
@@ -37,7 +46,7 @@ export const Navbar = () => {
                 </span>
               </div>
               <p className="text-[11px] text-zinc-400 font-medium leading-none">
-                Indian Standards Recommendation Platform
+                IS Recommendation Engine
               </p>
             </div>
 
@@ -75,9 +84,8 @@ export const Navbar = () => {
           >
             <span>{isRecommendPage ? "New Analysis" : "Explore IS Engine"}</span>
             <i
-              className={`ph-bold ${
-                isRecommendPage ? "ph-plus" : "ph-arrow-right"
-              } text-xs sm:text-base transition-transform group-hover:translate-x-0.5`}
+              className={`ph-bold ${isRecommendPage ? "ph-plus" : "ph-arrow-right"
+                } text-xs sm:text-base transition-transform group-hover:translate-x-0.5`}
             />
           </button>
         </div>
