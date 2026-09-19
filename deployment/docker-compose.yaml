@@ -1,0 +1,14 @@
+services:
+  backend:
+    image: harryohm33/sahayak-backend:latest
+    build:
+      context: ../backend
+      dockerfile: deploy/Dockerfile
+    container_name: sahayak_backend
+    restart: always
+    ports:
+      - "3001:3001"
+    volumes:
+      - ../docs:/docs
+    env_file:
+      - .env
